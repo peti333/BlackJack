@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>BlackJack</title>
+    <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <ul id="navbar" hidden>
+        <li>Peti's Casino</li>
+        <li id="leaderBoard">Leaderboard</li>
+        <li id="rules">Rules</li>
+    </ul>
+    <div id="title">Peti's Casino</div>
+    <div id="timer" hidden><p></p></div>
+    <form id="login">
+        <label id="userLabel" class="loginLabel">Username:</label>
+        <input type="text" id="usernameInput" class="textInput">
+        <label id="passwordLabel" class="loginLabel">Password:</label>
+        <input type="text" id="passwordInput" class="textInput">
+        <input type="button" id="loginButton" value="login">
+    </form>
+    <div id="table" hidden>
+        <div id="dealer">
+            <div id="dealerHand"></div>
+        </div>
+        <div id="mainPlayer">
+            <div id="profile"></div>
+            <div id="playerHand"></div>
+            <div id="bet"><p></p></div>
+        </div>
+        <div id="player2"></div>
+        <div id="player2"></div>
+        <div id="player2"></div>
+        <div id="player2"></div>
+    </div>
+    <div id="bets" hidden>
+        <div id="betFive"><p>5$</p></div>
+        <div id="betTwenty"><p>20$</p></div>
+        <div id="betFifty"><p>50$</p></div>
+        <div id="betHundred"><p>100$</p></div>
+    </div>
+    <div id="actions" hidden>
+        <div id="hit"><p>HIT</p></div>
+        <div id="stand"><p>STAND</p></div>
+        <div id="doubleDown"><p>DOUBLE DOWN</p></div>
+        <div id="split"><p>SPLIT</p></div>
+    </div>
+</body>
+</html>
