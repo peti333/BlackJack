@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
     //TODO: don't allow to join mid game
     operator.addPlayer(data)
     if(!timerStarted){
-      let timer = 5
+      let timer = 10
       timerStarted = true
     setInterval(function() {
       if(timer > 0){
@@ -74,22 +74,30 @@ io.on('connection', (socket) => {
   //DATA => username
   //TODO: change getPlayer to currentPlayer
   socket.on('getCards',data =>{
-    let cards = operator.getPlayer(0).getCards()
+    console.log(data)
+    let cards = operator.getPlayer(data)
+    console.log(cards)
     io.emit('giveCards',cards)
     io.emit('giveDealer',operator.getDealer()._cards)
   })
 
   socket.on('action', data =>{
     console.log("user action: " + data)
-
-    switch(data){
+    let datas = data.split(":")
+    let username = datas[0]
+    let action = datas[1]
+    switch(action){
       case "hit":
-        operator.playerHit()
-        let card = operator.getPlayer(0).getLastCard()
-        io.emit('giveCard',card)
+        operator.playerHit(username)
+        let cards = operator.getPlayer(username)
+        io.emit('giveCard',cards)
         break
       case "stand":
         operator.playerStand()
+        if(operator['_roundOver']){
+        io.emit('giveDealerMore',operator.getDealer())
+        }
+        
         //TODO:remove after testing
         break
       case "split":
@@ -98,7 +106,6 @@ io.on('connection', (socket) => {
         break
     }
     //operator.writeAllCards()
-    socket.broadcast.emit('hitBroadcast',data)
   })
 });
 

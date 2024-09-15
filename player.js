@@ -6,6 +6,7 @@ class Player{
     _sum = 0
     _hasAce = false
     _username = "default"
+    _lose = false
     constructor(username = "default"){
         this._username = username
     }
@@ -66,6 +67,9 @@ class Player{
     }
     getLastCard(){
         return this._cards[this._cards.length - 1]
+    }
+    setLose(to){
+        this._lose = to
     }
 }
 

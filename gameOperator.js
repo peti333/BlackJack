@@ -13,6 +13,7 @@ class GameOperator{
     _dealer = new Player("dealer")
     _currentPlayer = 0
     _cards = new Deck()
+    _roundOver = false
     constructor(){
         console.log("game operator constructor called")
     }
@@ -30,6 +31,7 @@ class GameOperator{
         }
     }
     dealCards(){
+        this._roundOver = false
         let drawnCard
         for(let j = 0; j < 2; j++){
             
@@ -49,34 +51,48 @@ class GameOperator{
     startGame(){
         this._cards = new Deck()
         this.dealCards()
-        this._currentPlayer = 1
+        this._currentPlayer = 0
     }
-    playerHit(){
+    playerHit(username){
         //TODO: check if possible actions
         //ERROR HERE: maybe player is not added
         //TODO: change 0 -> this._currentPlayer
         let drawnCard = this._cards.drawCard()
         console.log("drawn card: " + drawnCard.getSuit() + ":" + drawnCard.getValue())
-        this._players[0].addCard(drawnCard.getSuit(),drawnCard.getValue())
+        this.getPlayer(username).addCard(drawnCard.getSuit(),drawnCard.getValue())
+        if(this.getPlayer(username)['_sum'] > 21){
+            this.playerLose(username)
+            console.log(username + "has lost")
+        }
+        //this._players[this._currentPlayer].addCard(drawnCard.getSuit(),drawnCard.getValue())
     }
     playerStand(){
-        if(this._currentPlayer++ == this._players.length){
+        if(++this._currentPlayer == this._players.length){
             this.roundOver()
         }
+        
     }
     roundOver(){
         //TODO: check if there are live players
         //TODO: deal with ace
-        let sum = this._dealer.getSum()
+        this._roundOver = true
+        let sum = this._dealer['_sum']
         while(sum < 17){
-            this._dealer.addCard(this._cards.drawCard())
+            let drawnCard = this._cards.drawCard()
+            this._dealer.addCard(drawnCard.getSuit(),drawnCard.getValue())
+            sum = this._dealer['_sum']
+            
         }
     }
     gameOver(){
         this._cards.newDeck()
     }
-    getPlayer(index){
-        return this._players[index]
+    getPlayer(username){
+        for(let i = 0; i < this._players.length; i++){
+            if(this._players[i].getUsername() == username){
+                return this._players[i]
+            }
+        }
     }
     getDealer(){
         return this._dealer
@@ -86,6 +102,12 @@ class GameOperator{
         for(let i = 0; i < this._players.length; i++){
             this._players[i].writeCards()
         }
+    }
+    playerLose(username){
+        this.getPlayer(username).setLose(true)
+    }
+    playerWin(){
+
     }
 }
 

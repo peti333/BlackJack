@@ -23,22 +23,51 @@ const betCircle = document.getElementById('bet')
 const timer = document.getElementById('timer')
 const bets = document.getElementById('bets')
 const actions = document.getElementById('actions')
-const playerHand = document.getElementById('playerHand')
-const dealerHand = document.getElementById('dealerHand')
+let playerHand = document.getElementById('playerHand')
+let dealerHand = document.getElementById('dealerHand')
 
 let betValue = 0
 let betAddValue = 0
-
+let dealed = 0
 
 socket.on('giveCards',data =>{
-    //console.log(data)
-    playerHand.innerHTML += '<div class="card">' + data[0]['suit'] + ':' + data[0]['value'] + '</div>'
-    playerHand.innerHTML += '<div class="card">' + data[1]['suit'] + ':' + data[1]['value'] + '</div>'
+    console.log("GIVECARDS")
+    console.log(data)
+    let getCards = data['_cards']
+    let getUsername = data['_username']
+    console.log("getCards: " + getCards)
+    console.log("getUsername: " + getUsername)
+    if(getUsername === username.value){
+        console.log("found username match")
+        playerHand = document.getElementById('playerHand')
+        playerHand.innerHTML += '<div class="card">' +  getCards[0]['suit'] + ':' + getCards[0]['value'] +  '</div>'
+        playerHand.innerHTML += '<div class="card">' +  getCards[1]['suit'] + ':' + getCards[1]['value'] +  '</div>'
+    }
+    else{
+        //TODO: class:playerX for multiple players
+        table.innerHTML += '<div id=' + getUsername + '>' + '<div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + '</div'
+    }
+    
 })
 
 socket.on('giveCard',data =>{
     //console.log(data)
-    playerHand.innerHTML += '<div class="card">' + data['suit'] + ':' + data['value'] + '</div>'
+    console.log(data)
+    let getCards = data['_cards']
+    let getUsername = data['_username']
+    console.log("getCards: " + getCards)
+    console.log("getUsername: " + getUsername)
+
+    if(getUsername === username.value){
+        console.log("found username match")
+        playerHand = document.getElementById('playerHand')
+        playerHand.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
+    }
+    else{
+        //TODO: class:playerX for multiple players
+        let toPlayer = document.getElementById(getUsername)
+        toPlayer.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
+    }
 })
 
 socket.on('hitBroadcast', data=> {
@@ -63,8 +92,26 @@ socket.on('bettingOver', data => {
 
 socket.on('giveDealer',data => {
     //console.log(data)
-    dealerHand.innerHTML += '<div class="card">' + data[0]['suit'] + ':' + data[0]['value'] + '</div>'
-    dealerHand.innerHTML += '<div class="card">' + data[1]['suit'] + ':' + data[1]['value'] + '</div>'
+    dealerHand = document.getElementById('dealerHand')
+    if(dealed == 0){
+        dealerHand.innerHTML += '<div class="card">' + data[0]['suit'] + ':' + data[0]['value'] + '</div>'
+        dealerHand.innerHTML += '<div class="card">' + data[1]['suit'] + ':' + data[1]['value'] + '</div>'
+        dealed = 1
+    }
+    
+})
+
+socket.on('giveDealerMore',data => {
+    console.log(data)
+    
+    dealerHand = document.getElementById('dealerHand')
+    let getCards = data['_cards']
+
+    for(let i = 2; i < getCards.length; i++){
+        console.log(getCards[i]['suit'] + ":" + getCards[i]['value'])
+        dealerHand.innerHTML += '<div class="card">' + getCards[i]['suit'] + ':' + getCards[i]['value'] + '</div>'
+    }
+    
 })
 
 // LOGIN BUTTON
@@ -72,7 +119,7 @@ socket.on('giveDealer',data => {
 
 loginButton.addEventListener('click', e => {
     //console.log(username.value + " " + password.value)
-    const data = "username:" + username.value + ";password:" + password.value
+    const data = username.value   // + ";password:" + password.value
     socket.emit('loginSubmit',data)
 
     bets.hidden = false
@@ -92,22 +139,22 @@ loginButton.addEventListener('click', e => {
 
 
 hitButton.addEventListener('click', e => {
-    const data = "hit"
+    const data = username.value + ":hit"
     socket.emit('action',data)
 })
 
 standButton.addEventListener('click', e => {
-    const data = "stand"
+    const data = username.value + ":stand"
     socket.emit('action',data)
 })
 
 splitButton.addEventListener('click', e => {
-    const data = "split"
+    const data = username.value + ":split"
     socket.emit('action',data)
 })
 
 doubleDownButton.addEventListener('click', e => {
-    const data = "double"
+    const data = username.value + ":double"
     socket.emit('action',data)
 })
 
