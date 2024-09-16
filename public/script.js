@@ -30,7 +30,9 @@ let dealerHand = document.getElementById('dealerHand')
 let betValue = 0
 let betAddValue = 0
 let dealed = 0
-
+let currentPlayerUsername = ''
+let lastCurrentPlayer
+let otherPlayer
 
 // -------------
 // INCOMING DATA
@@ -51,7 +53,7 @@ socket.on('giveCards',data =>{
     }
     else{
         //TODO: class:playerX for multiple players
-        table.innerHTML += '<div id=' + getUsername + '>' + '<div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + '</div'
+        table.innerHTML += '<div id=' + getUsername + '>' + '<div id="profile-' + getUsername +'" class="profile1"><p>' + getUsername +'</p></div>' + '<div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + '</div'
     }
     
 })
@@ -129,22 +131,37 @@ socket.on('giveDealerMore',data => {
     let getCards = data['_cards']
 
     for(let i = 2; i < getCards.length; i++){
-        console.log(getCards[i]['suit'] + ":" + getCards[i]['value'])
         dealerHand.innerHTML += '<div class="card">' + getCards[i]['suit'] + ':' + getCards[i]['value'] + '</div>'
     }
     
 })
 
 socket.on('playerTurn',data => {
-    console.log(data)
+
     profile = document.getElementById('profile')
     if(data == username.value){
-        console.log("MATCH")
         profile.classList.add("activeProfile")
     }
     else{
+        otherPlayer = document.getElementById('profile-' + data)
+        lastCurrentPlayer = document.getElementById('profile-' + currentPlayerUsername)
+        if(otherPlayer){
+            otherPlayer.style.border = "1px solid red"
+            console.log("new border")
+        }
+        console.log("data: " + data)
+        console.log("currentPlayerUsername: " + currentPlayerUsername)
+        console.log('currentPlayerUsername !== ""' + (currentPlayerUsername !== ""))
+        console.log("data !== currentPlayerUsername" + (data !== currentPlayerUsername))
+        console.log("lastCurrentPlayer !== null" + (lastCurrentPlayer !== null))
+        if(currentPlayerUsername !== "" && data !== currentPlayerUsername && lastCurrentPlayer !== null){
+            console.log("removing border")
+            lastCurrentPlayer.style.border = ""
+            lastCurrentPlayer.classList.remove("activeProfile")
+        }
         profile.classList.remove("activeProfile")
     }
+    currentPlayerUsername = data
 })
 
 

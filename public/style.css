@@ -248,3 +248,16 @@ body{
     font-size: 2em;
     margin:0em;
 }
+
+.profile1{
+    position: absolute;
+    display:flex;
+    left: 10%;
+    top:10%;
+    width: 12em;
+    height: 4em;
+    background-color: blue;
+    border-radius: 25%;
+    justify-content: center;
+    align-items: center;
+}
