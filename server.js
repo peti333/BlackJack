@@ -64,6 +64,7 @@ io.on('connection', (socket) => {
         if(!gameStarted){
           io.emit('bettingOver',0)
           operator.startGame()
+          io.emit('playerTurn',operator.getCurrentPlayerUsername())
         }
         gameStarted = true
         //timer = 10
@@ -93,12 +94,14 @@ io.on('connection', (socket) => {
           let cards = operator.getPlayer(username)
           io.emit('giveCard',cards)
         }
+        io.emit('playerTurn',operator.getCurrentPlayerUsername())
         break
       case "stand":
         operator.playerStand(username)
         if(operator['_roundOver']){
         io.emit('giveDealerMore',operator.getDealer())
         }
+        io.emit('playerTurn',operator.getCurrentPlayerUsername())
         break
       case "split":
         break

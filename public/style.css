@@ -226,3 +226,25 @@ body{
     padding: 0;
     margin:0;
 }
+
+#profile{
+    position: absolute;
+    display:flex;
+    left: 10%;
+    bottom:4em;
+    width: 12em;
+    height: 4em;
+    background-color: blue;
+    border-radius: 25%;
+    justify-content: center;
+    align-items: center;
+}
+
+.activeProfile{
+    border:1px solid red;
+}
+
+#profile > p{
+    font-size: 2em;
+    margin:0em;
+}

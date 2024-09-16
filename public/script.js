@@ -23,6 +23,7 @@ const betCircle = document.getElementById('bet')
 const timer = document.getElementById('timer')
 const bets = document.getElementById('bets')
 const actions = document.getElementById('actions')
+let profile = document.getElementById('profile')
 let playerHand = document.getElementById('playerHand')
 let dealerHand = document.getElementById('dealerHand')
 
@@ -30,15 +31,20 @@ let betValue = 0
 let betAddValue = 0
 let dealed = 0
 
+
+// -------------
+// INCOMING DATA
+// -------------
+
+
+//
+//  First 2 cards for every player
+//
 socket.on('giveCards',data =>{
-    console.log("GIVECARDS")
-    console.log(data)
+
     let getCards = data['_cards']
     let getUsername = data['_username']
-    console.log("getCards: " + getCards)
-    console.log("getUsername: " + getUsername)
     if(getUsername === username.value){
-        console.log("found username match")
         playerHand = document.getElementById('playerHand')
         playerHand.innerHTML += '<div class="card">' +  getCards[0]['suit'] + ':' + getCards[0]['value'] +  '</div>'
         playerHand.innerHTML += '<div class="card">' +  getCards[1]['suit'] + ':' + getCards[1]['value'] +  '</div>'
@@ -50,16 +56,15 @@ socket.on('giveCards',data =>{
     
 })
 
+//
+//  Recieve one card to player
+//
 socket.on('giveCard',data =>{
     //console.log(data)
-    console.log(data)
     let getCards = data['_cards']
     let getUsername = data['_username']
-    console.log("getCards: " + getCards)
-    console.log("getUsername: " + getUsername)
 
     if(getUsername === username.value){
-        console.log("found username match")
         playerHand = document.getElementById('playerHand')
         playerHand.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
     }
@@ -70,15 +75,24 @@ socket.on('giveCard',data =>{
     }
 })
 
+
+//TODO: REMOVE
 socket.on('hitBroadcast', data=> {
     //console.log(data)
 })
 
+//
+//  Timer information: countdown
+//
 socket.on('timer', data=> {
     //console.log("timer: " + data)
     timer.innerHTML = "<p>" + data +"</p>"
 })
 
+
+//
+//  When countdown hits 0 the game starts
+//
 socket.on('bettingOver', data => {
     betAddValue = 0
     betFive.hidden = true
@@ -90,6 +104,10 @@ socket.on('bettingOver', data => {
     socket.emit("getCards",username.value)
 })
 
+
+//
+//  Dealer first 2 cards
+//
 socket.on('giveDealer',data => {
     //console.log(data)
     dealerHand = document.getElementById('dealerHand')
@@ -101,8 +119,11 @@ socket.on('giveDealer',data => {
     
 })
 
+
+//
+//  Dealer drawing cards according to rules
+//
 socket.on('giveDealerMore',data => {
-    console.log(data)
     
     dealerHand = document.getElementById('dealerHand')
     let getCards = data['_cards']
@@ -114,14 +135,31 @@ socket.on('giveDealerMore',data => {
     
 })
 
+socket.on('playerTurn',data => {
+    console.log(data)
+    profile = document.getElementById('profile')
+    if(data == username.value){
+        console.log("MATCH")
+        profile.classList.add("activeProfile")
+    }
+    else{
+        profile.classList.remove("activeProfile")
+    }
+})
+
+
+//  -------
+//  BUTTONS
+//  -------
+
 // LOGIN BUTTON
-
-
 loginButton.addEventListener('click', e => {
     //console.log(username.value + " " + password.value)
     const data = username.value   // + ";password:" + password.value
     socket.emit('loginSubmit',data)
 
+
+    profile.innerHTML = '<p>' + username.value + '</p>'
     bets.hidden = false
     loginButton.hidden = true
     username.hidden = true
@@ -136,8 +174,6 @@ loginButton.addEventListener('click', e => {
 
 
 //ACTION BUTTONS
-
-
 hitButton.addEventListener('click', e => {
     const data = username.value + ":hit"
     socket.emit('action',data)
@@ -160,15 +196,12 @@ doubleDownButton.addEventListener('click', e => {
 
 
 // NAVBAR BUTTONS
-
-
 rules.addEventListener('click', e => {
     rules.style.backgroundColor = "purple"
 })
 
 
 // BET BUTTONS
-
 betFive.addEventListener('click', e => {
     betAddValue = 5
 })
