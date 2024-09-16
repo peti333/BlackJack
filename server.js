@@ -95,12 +95,10 @@ io.on('connection', (socket) => {
         }
         break
       case "stand":
-        operator.playerStand()
+        operator.playerStand(username)
         if(operator['_roundOver']){
         io.emit('giveDealerMore',operator.getDealer())
         }
-        
-        //TODO:remove after testing
         break
       case "split":
         break

@@ -54,11 +54,11 @@ class GameOperator{
         this._currentPlayer = 0
     }
     playerHit(username){
-        console.log("CHECKING: " + this._players[this._currentPlayer].getUsername() + " ?= " +  username + " => " + (this._players[this._currentPlayer].getUsername() == username))
         if(this._players[this._currentPlayer].getUsername() == username){
-            console.log("GOOD USERNAME MATCH")
             let drawnCard = this._cards.drawCard()
-            console.log("drawn card: " + drawnCard.getSuit() + ":" + drawnCard.getValue())
+            //Debug:
+            //console.log("drawn card: " + drawnCard.getSuit() + ":" + drawnCard.getValue())
+
             this.getPlayer(username).addCard(drawnCard.getSuit(),drawnCard.getValue())
             if(this.getPlayer(username)['_sum'] > 21){
                 this.playerLose(username)
@@ -69,10 +69,12 @@ class GameOperator{
         return false
 
     }
-    playerStand(){
-        if(++this._currentPlayer == this._players.length){
-            this.roundOver()
-        }
+    playerStand(username){
+        if(this._players[this._currentPlayer].getUsername() == username){
+            if(++this._currentPlayer == this._players.length){
+                this.roundOver()
+            }
+    }
         
     }
     roundOver(){
