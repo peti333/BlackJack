@@ -88,9 +88,11 @@ io.on('connection', (socket) => {
     let action = datas[1]
     switch(action){
       case "hit":
-        operator.playerHit(username)
-        let cards = operator.getPlayer(username)
-        io.emit('giveCard',cards)
+        let canHit = operator.playerHit(username)
+        if(canHit){
+          let cards = operator.getPlayer(username)
+          io.emit('giveCard',cards)
+        }
         break
       case "stand":
         operator.playerStand()
