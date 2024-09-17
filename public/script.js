@@ -139,27 +139,20 @@ socket.on('giveDealerMore',data => {
 socket.on('playerTurn',data => {
 
     profile = document.getElementById('profile')
+    otherPlayer = document.getElementById('profile-' + data)
+    lastCurrentPlayer = document.getElementById('profile-' + currentPlayerUsername)
     if(data == username.value){
         profile.classList.add("activeProfile")
     }
     else{
-        otherPlayer = document.getElementById('profile-' + data)
-        lastCurrentPlayer = document.getElementById('profile-' + currentPlayerUsername)
         if(otherPlayer){
             otherPlayer.style.border = "1px solid red"
-            console.log("new border")
-        }
-        console.log("data: " + data)
-        console.log("currentPlayerUsername: " + currentPlayerUsername)
-        console.log('currentPlayerUsername !== ""' + (currentPlayerUsername !== ""))
-        console.log("data !== currentPlayerUsername" + (data !== currentPlayerUsername))
-        console.log("lastCurrentPlayer !== null" + (lastCurrentPlayer !== null))
-        if(currentPlayerUsername !== "" && data !== currentPlayerUsername && lastCurrentPlayer !== null){
-            console.log("removing border")
-            lastCurrentPlayer.style.border = ""
-            lastCurrentPlayer.classList.remove("activeProfile")
         }
         profile.classList.remove("activeProfile")
+    }
+    if(currentPlayerUsername !== "" && data !== currentPlayerUsername && lastCurrentPlayer !== null){
+        lastCurrentPlayer.style.border = ""
+        lastCurrentPlayer.classList.remove("activeProfile")
     }
     currentPlayerUsername = data
 })

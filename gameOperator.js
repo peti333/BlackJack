@@ -74,7 +74,7 @@ class GameOperator{
             if(++this._currentPlayer == this._players.length){
                 
                 this.roundOver()
-                this._currentPlayer = 0
+                //this._currentPlayer = 0
             }
         }
         console.log(this._currentPlayer)
@@ -103,7 +103,9 @@ class GameOperator{
         }
     }
     getCurrentPlayerUsername(){
-        console.log("OPERATOR: " + this._players[this._currentPlayer]['_username'])
+        if(this._currentPlayer == this._players.length){
+            return "Dealer"
+        }
         return this._players[this._currentPlayer]['_username']
     }
     getDealer(){
