@@ -56,15 +56,15 @@ class GameOperator{
     }
     playerHit(username){
         //console.log(this._players[this._currentPlayer['_lose']])
-        if(this._players[this._currentPlayer].getUsername() == username && this._players[this._currentPlayer]['_lose'] == false){
+        if(this._players[this._currentPlayer].getUsername() == username && this._players[this._currentPlayer]['_over'] == false){
             let drawnCard = this._cards.drawCard()
             //Debug:
             //console.log("drawn card: " + drawnCard.getSuit() + ":" + drawnCard.getValue())
 
             this.getPlayer(username).addCard(drawnCard.getSuit(),drawnCard.getValue())
-            if(this.getPlayer(username)['_sum'] > 21){
+            if(this.getPlayer(username).getSum()[0] > 21){
                 this.playerLose(username)
-                this._lostPlayers.push(username)
+                this._lostPlayers.push(this.getPlayer(username))
                 console.log(username + " has lost")
                 return [true,true]
             }
@@ -76,24 +76,19 @@ class GameOperator{
     playerStand(username){
         if(this._players[this._currentPlayer].getUsername() == username){
             if(++this._currentPlayer == this._players.length){
-                
                 this.roundOver()
-                //this._currentPlayer = 0
             }
-        }
-        console.log(this._currentPlayer)
-        
+        }  
     }
     roundOver(){
         //TODO: check if there are live players
         //TODO: deal with ace
         this._roundOver = true
-        let sum = this._dealer['_sum']
+        let sum = this._dealer.getSum()[0]
         while(sum < 17){
             let drawnCard = this._cards.drawCard()
             this._dealer.addCard(drawnCard.getSuit(),drawnCard.getValue())
-            sum = this._dealer['_sum']
-            
+            sum = this._dealer.getSum()[0]
         }
         this.checkWin()
     }
@@ -116,26 +111,72 @@ class GameOperator{
     getDealer(){
         return this._dealer
     }
+    //ONLY FOR TESTING
     writeAllCards(){
         console.log("WriteAllCards called")
         for(let i = 0; i < this._players.length; i++){
             this._players[i].writeCards()
         }
     }
-    playerLose(username){
-        this.getPlayer(username).setLose(true)
-    }
-    playerWin(){
-
-    }
+    
     getLostPlayers(){
         return _lostPlayers;
     }
     checkWin(){
-
+        //GET PLAYERS ELIGIBLE TO WIN
+        let activePlayers = this._players.filter(n => !this._lostPlayers.includes(n))
+        console.log("ACTIVE PLAYERS:" + activePlayers)
+        let playerSum = 0
+        let dealerSum = 0
+        for(let i = 0; i < activePlayers.length; i++){
+            //console.log(activePlayers[i])
+            playerSum = activePlayers[i].getSum()
+            if(playerSum.length == 2 && playerSum[1] <= 21){
+                playerSum = playerSum[1]
+            }
+            else{
+                playerSum = playerSum[0]
+            }
+            dealerSum = this._dealer.getSum()[0]
+            console.log(playerSum + " ?= " + dealerSum)
+            if(playerSum > dealerSum || dealerSum > 21){
+                console.log("WINNING")
+                this.playerWin(activePlayers[i].getUsername())
+            }
+            else if(playerSum == dealerSum){
+                console.log("TIE")
+                this.playerTie(activePlayers[i].getUsername())
+            }
+            else{
+                console.log("LOSE")
+                this.playerLose(activePlayers[i].getUsername())
+            }
+            activePlayers[i].setOver(true)
+        }
+        
     }
     getPlayerCount(){
         return this._players.length
+    }
+    playerLose(username){
+        this.getPlayer(username).setLose(-1)
+    }
+    playerWin(username){
+        this.getPlayer(username).setLose(1)
+    }
+    playerTie(username){
+        this.getPlayer(username).setLose(0)
+    }
+    //Make an array of [username - win/lose/tie] to send to clients
+    getGameOverPlayers(){
+         let data = []
+         let tempPlayer
+         for(let i = 0; i < this._players.length; i++){
+            tempPlayer = this._players[i]
+            data.push(tempPlayer.getUsername(),tempPlayer.getLose())
+         }
+         console.log(data)
+         return data
     }
 }
 

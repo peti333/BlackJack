@@ -6,7 +6,9 @@ class Player{
     _sum = 0
     _hasAce = false
     _username = "default"
-    _lose = false
+    //TODO: make lose int -> -1 = lose, 0 = tie, 1 = win
+    _lose = 0
+    _over = false
     constructor(username = "default"){
         this._username = username
     }
@@ -22,7 +24,7 @@ class Player{
         else{
             this._sum += value
         }
-        if(value = 1){
+        if(value == 1){
             this._hasAce = true
         }
     }
@@ -48,6 +50,9 @@ class Player{
             if(this._sum + 10 < 21){
                 return [this._sum, 10 + this._sum]
             }
+            else{
+                return [this._sum]
+            }
         }
     }
     clearHand(){
@@ -70,6 +75,12 @@ class Player{
     }
     setLose(to){
         this._lose = to
+    }
+    getLose(){
+        return this._lose
+    }
+    setOver(to){
+        this._over = to
     }
 }
 

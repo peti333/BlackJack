@@ -73,8 +73,8 @@ io.on('connection', (socket) => {
     }, 1000)
     }
   })
+
   //DATA => username
-  //TODO: change getPlayer to currentPlayer
   socket.on('getCards',data =>{
     console.log(data)
     let cards = operator.getPlayer(data)
@@ -104,13 +104,12 @@ io.on('connection', (socket) => {
         }
         action = "stand"
       case "stand":
-        console.log("AAAAA")
         operator.playerStand(username)
         if(operator['_roundOver']){
         io.emit('giveDealerMore',operator.getDealer())
+        operator.getGameOverPlayers()
         }
         currentPlayer = operator.getCurrentPlayerUsername()
-        console.log("SERVER: " + currentPlayer)
         io.emit('playerTurn',currentPlayer)
         break
       case "split":
@@ -126,7 +125,3 @@ const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-function timerDone(){
-
-}
