@@ -14,6 +14,7 @@ class GameOperator{
     _currentPlayer = 0
     _cards = new Deck()
     _roundOver = false
+    _lostPlayers = []
     constructor(){
         console.log("game operator constructor called")
     }
@@ -54,7 +55,8 @@ class GameOperator{
         this._currentPlayer = 0
     }
     playerHit(username){
-        if(this._players[this._currentPlayer].getUsername() == username){
+        //console.log(this._players[this._currentPlayer['_lose']])
+        if(this._players[this._currentPlayer].getUsername() == username && this._players[this._currentPlayer]['_lose'] == false){
             let drawnCard = this._cards.drawCard()
             //Debug:
             //console.log("drawn card: " + drawnCard.getSuit() + ":" + drawnCard.getValue())
@@ -62,11 +64,13 @@ class GameOperator{
             this.getPlayer(username).addCard(drawnCard.getSuit(),drawnCard.getValue())
             if(this.getPlayer(username)['_sum'] > 21){
                 this.playerLose(username)
-                console.log(username + "has lost")
+                this._lostPlayers.push(username)
+                console.log(username + " has lost")
+                return [true,true]
             }
-            return true
+            return [true,false]
         }
-        return false
+        return [false,false]
 
     }
     playerStand(username){
@@ -91,6 +95,7 @@ class GameOperator{
             sum = this._dealer['_sum']
             
         }
+        this.checkWin()
     }
     gameOver(){
         this._cards.newDeck()
@@ -122,6 +127,15 @@ class GameOperator{
     }
     playerWin(){
 
+    }
+    getLostPlayers(){
+        return _lostPlayers;
+    }
+    checkWin(){
+
+    }
+    getPlayerCount(){
+        return this._players.length
     }
 }
 

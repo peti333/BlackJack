@@ -249,7 +249,7 @@ body{
     margin:0em;
 }
 
-.profile1{
+.profile0{
     position: absolute;
     display:flex;
     left: 10%;
@@ -260,4 +260,54 @@ body{
     border-radius: 25%;
     justify-content: center;
     align-items: center;
+}
+
+.profile0 > .card{
+    translate:0em 8em;
+}
+
+.profile1{
+    position: absolute;
+    display:flex;
+    right: 10%;
+    top:10%;
+    width: 12em;
+    height: 4em;
+    background-color: blue;
+    border-radius: 25%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.profile1 > .card{
+    translate:0em 6em;
+}
+
+
+#dealerName{
+    position: absolute;
+    display:flex;
+    left: 40%;
+    top:0em;
+    width: 12em;
+    height: 4em;
+    background-color: blue;
+    border-radius: 25%;
+    justify-content: center;
+    align-items: center;
+}
+
+#dealerName > p{
+    font-size: 2em;
+    margin:0em;
+}
+
+#popUp{
+    position: absolute;
+    background-color: grey;
+    opacity: 75%;
+    top:20%;
+    width: 100%;
+    height: 25%;
 }

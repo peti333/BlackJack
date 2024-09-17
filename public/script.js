@@ -23,9 +23,11 @@ const betCircle = document.getElementById('bet')
 const timer = document.getElementById('timer')
 const bets = document.getElementById('bets')
 const actions = document.getElementById('actions')
+const dealer = document.getElementById('dealer')
 let profile = document.getElementById('profile')
 let playerHand = document.getElementById('playerHand')
 let dealerHand = document.getElementById('dealerHand')
+
 
 let betValue = 0
 let betAddValue = 0
@@ -33,7 +35,8 @@ let dealed = 0
 let currentPlayerUsername = ''
 let lastCurrentPlayer
 let otherPlayer
-
+let playerCount = 1
+let playerIndex = 0
 // -------------
 // INCOMING DATA
 // -------------
@@ -53,7 +56,7 @@ socket.on('giveCards',data =>{
     }
     else{
         //TODO: class:playerX for multiple players
-        table.innerHTML += '<div id=' + getUsername + '>' + '<div id="profile-' + getUsername +'" class="profile1"><p>' + getUsername +'</p></div>' + '<div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + '</div'
+        table.innerHTML += '<div id=' + getUsername + '>' + '<div id="profile-' + getUsername +'" class="profile' + playerIndex++ +'"><p>' + getUsername +'</p>' + '<div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + '</div>'
     }
     
 })
@@ -72,7 +75,7 @@ socket.on('giveCard',data =>{
     }
     else{
         //TODO: class:playerX for multiple players
-        let toPlayer = document.getElementById(getUsername)
+        let toPlayer = document.getElementById('profile-'+getUsername)
         toPlayer.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
     }
 })
@@ -103,6 +106,7 @@ socket.on('bettingOver', data => {
     betHundred.hidden = true
     actions.hidden = false
     timer.hidden = true
+    dealer.hidden = false
     socket.emit("getCards",username.value)
 })
 
@@ -157,6 +161,9 @@ socket.on('playerTurn',data => {
     currentPlayerUsername = data
 })
 
+socket.on('playerCount',data => {
+    playerCount = data
+})
 
 //  -------
 //  BUTTONS
