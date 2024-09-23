@@ -105,7 +105,6 @@ socket.on('bettingOver', data => {
     betTwenty.hidden = true
     betFifty.hidden = true
     betHundred.hidden = true
-    actions.hidden = false
     timer.hidden = true
     dealer.hidden = false
     socket.emit("getCards",username.value)
@@ -148,8 +147,10 @@ socket.on('playerTurn',data => {
     lastCurrentPlayer = document.getElementById('profile-' + currentPlayerUsername)
     if(data == username.value){
         profile.classList.add("activeProfile")
+        actions.hidden = false
     }
     else{
+        actions.hidden = true
         if(otherPlayer){
             otherPlayer.style.border = "1px solid red"
         }

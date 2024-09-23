@@ -82,7 +82,6 @@ class GameOperator{
     }
     roundOver(){
         //TODO: check if there are live players
-        //TODO: deal with ace
         this._roundOver = true
         let sum = this._dealer.getSum()[0]
         while(sum < 17){
