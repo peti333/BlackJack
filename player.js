@@ -6,9 +6,9 @@ class Player{
     _sum = 0
     _hasAce = false
     _username = "default"
-    //TODO: make lose int -> -1 = lose, 0 = tie, 1 = win
     _lose = 0
     _over = false
+    _bet = 0
     constructor(username = "default"){
         this._username = username
     }
@@ -57,6 +57,7 @@ class Player{
     }
     clearHand(){
         this._hasAce = false
+        this._bet = 0
         this._cards = []
     }
     //TODO: remove after testing
@@ -81,6 +82,12 @@ class Player{
     }
     setOver(to){
         this._over = to
+    }
+    setBet(to){
+        this._bet = to
+    }
+    getBet(to){
+        return this._bet
     }
 }
 

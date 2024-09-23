@@ -1,16 +1,12 @@
 /*
 TODO:
   - server side betting
-  - dealer
   - player
-    - card
     - bet
     - balance
   - other players
-    - hand
     - bet
   - buttons appearing in situations: double, split
-  - playing the game
 LATER:
   - dataBase
   - leaderboard
@@ -51,6 +47,7 @@ io.on('connection', (socket) => {
   socket.on('loginSubmit', data =>{
     console.log("user logged in: " + data)
     //TODO: don't allow to join mid game
+    //TODO: check if player can bet
     operator.addPlayer(data)
     if(!timerStarted){
       let timer = 15
