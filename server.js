@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
     //TODO: don't allow to join mid game
     operator.addPlayer(data)
     if(!timerStarted){
-      let timer = 10
+      let timer = 15
       timerStarted = true
     setInterval(function() {
       if(timer > 0){

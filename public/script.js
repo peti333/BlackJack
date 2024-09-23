@@ -36,7 +36,7 @@ let currentPlayerUsername = ''
 let lastCurrentPlayer
 let otherPlayer
 let playerCount = 1
-let playerIndex = 0
+let playerIndex = 1
 // -------------
 // INCOMING DATA
 // -------------
@@ -56,7 +56,7 @@ socket.on('giveCards',data =>{
     }
     else{
         //TODO: class:playerX for multiple players
-        table.innerHTML += '<div id=' + getUsername + '>' + '<div id="profile-' + getUsername +'" class="profile' + playerIndex++ +'"><p>' + getUsername +'</p>' + '<div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + '</div>'
+        table.innerHTML += '<div id=' + getUsername + ' class="player' +playerIndex++ +'" >' + '<div id="profile-' + getUsername +'" class="profileBorder"><p>' + getUsername +'</p>'  + ' </div>  <div id="hand-'+ getUsername +'" class="hand"> <div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + ' </div>'
     }
     
 })
@@ -76,7 +76,8 @@ socket.on('giveCard',data =>{
     else{
         //TODO: class:playerX for multiple players
         let toPlayer = document.getElementById('profile-'+getUsername)
-        toPlayer.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
+        let toHand = document.getElementById( 'hand-'+ getUsername)
+        toHand.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
     }
 })
 
@@ -115,7 +116,7 @@ socket.on('bettingOver', data => {
 //  Dealer first 2 cards
 //
 socket.on('giveDealer',data => {
-    //console.log(data)
+    console.log(data)
     dealerHand = document.getElementById('dealerHand')
     if(dealed == 0){
         dealerHand.innerHTML += '<div class="card">' + data[0]['suit'] + ':' + data[0]['value'] + '</div>'
