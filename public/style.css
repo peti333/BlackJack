@@ -339,7 +339,7 @@ body{
 
 .player2{
     position: absolute;
-    top: 35%;
+    top: 40%;
     left:5%;
     width: 12em;
     height: 10em;
@@ -355,7 +355,7 @@ body{
 
 .player4{
     position: absolute;
-    top: 35%;
+    top: 40%;
     right:5%;
     width: 12em;
     height: 10em;
