@@ -13,16 +13,19 @@ class GameOperator{
     _dealer = new Player("dealer")
     _currentPlayer = 0
     _cards = new Deck()
-    _roundOver = false
+    _roundOver = true
     _lostPlayers = []
     constructor(){
-        console.log("game operator constructor called")
     }
     addPlayer(username){
         let newPlayer = new Player(username)
-        //ERROR: NOT ADDED PLAYER
         this._players.push(newPlayer)
         console.log(this._players)
+    }
+
+    //For future uses, for players that have played before
+    addExistingPlayer(username,balance){
+
     }
     removePlayer(username){
         for(let i = 0; i < this._players.length; i++){
@@ -53,6 +56,7 @@ class GameOperator{
         this._cards = new Deck()
         this.dealCards()
         this._currentPlayer = 0
+        this._roundOver = false
     }
     playerHit(username){
         //console.log(this._players[this._currentPlayer['_lose']])
@@ -81,13 +85,15 @@ class GameOperator{
         }  
     }
     roundOver(){
-        //TODO: check if there are live players
-        this._roundOver = true
-        let sum = this._dealer.getSum()[0]
-        while(sum < 17){
-            let drawnCard = this._cards.drawCard()
-            this._dealer.addCard(drawnCard.getSuit(),drawnCard.getValue())
-            sum = this._dealer.getSum()[0]
+        let activePlayers = this._players.filter(n => !this._lostPlayers.includes(n))
+        if(activePlayers.length >= 1){
+            this._roundOver = true
+            let sum = this._dealer.getSum()[0]
+            while(sum < 17){
+                let drawnCard = this._cards.drawCard()
+                this._dealer.addCard(drawnCard.getSuit(),drawnCard.getValue())
+                sum = this._dealer.getSum()[0]
+            }
         }
         this.checkWin()
     }
@@ -124,7 +130,6 @@ class GameOperator{
     checkWin(){
         //GET PLAYERS ELIGIBLE TO WIN
         let activePlayers = this._players.filter(n => !this._lostPlayers.includes(n))
-        console.log("ACTIVE PLAYERS:" + activePlayers)
         let playerSum = 0
         let dealerSum = 0
         for(let i = 0; i < activePlayers.length; i++){
@@ -137,22 +142,17 @@ class GameOperator{
                 playerSum = playerSum[0]
             }
             dealerSum = this._dealer.getSum()[0]
-            console.log(playerSum + " ?= " + dealerSum)
             if(playerSum > dealerSum || dealerSum > 21){
-                console.log("WINNING")
                 this.playerWin(activePlayers[i].getUsername())
             }
             else if(playerSum == dealerSum){
-                console.log("TIE")
                 this.playerTie(activePlayers[i].getUsername())
             }
             else{
-                console.log("LOSE")
                 this.playerLose(activePlayers[i].getUsername())
             }
             activePlayers[i].setOver(true)
         }
-        
     }
     getPlayerCount(){
         return this._players.length
@@ -174,8 +174,13 @@ class GameOperator{
             tempPlayer = this._players[i]
             data.push(tempPlayer.getUsername(),tempPlayer.getLose())
          }
-         console.log(data)
          return data
+    }
+    clearPlayerHands(){
+        for(let i = 0; i < this._players.length; i++){
+            this._players[i].clearHand()
+        }
+        this._dealer.clearHand()
     }
 }
 

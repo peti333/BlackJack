@@ -9,8 +9,10 @@ class Player{
     _lose = 0
     _over = false
     _bet = 0
-    constructor(username = "default"){
+    _balance = 100
+    constructor(username = "default", balance = 100){
         this._username = username
+        this._balance = balance
     }
     getUsername(){
         return this._username
@@ -58,7 +60,10 @@ class Player{
     clearHand(){
         this._hasAce = false
         this._bet = 0
+        this._sum = 0
         this._cards = []
+        this._lose = 0
+        this._over = false
     }
     //TODO: remove after testing
     writeCards(){
@@ -76,6 +81,15 @@ class Player{
     }
     setLose(to){
         this._lose = to
+        switch (to){
+            case 1:
+                this._balance += this._bet * 2
+                break
+            case 0:
+                this._balance += this._bet
+                break
+        }
+        this._bet = 0
     }
     getLose(){
         return this._lose
@@ -85,6 +99,7 @@ class Player{
     }
     setBet(to){
         this._bet = to
+        this._balance -= to
     }
     getBet(to){
         return this._bet

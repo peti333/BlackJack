@@ -38,6 +38,7 @@ app.use(express.static('public'));
 
 let timerStarted = false
 let gameStarted = false
+let timer = 15
 
 io.on('connection', (socket) => {
   socket.on('sendData', data =>{
@@ -46,32 +47,32 @@ io.on('connection', (socket) => {
   })
   socket.on('loginSubmit', data =>{
     console.log("user logged in: " + data)
-    //TODO: don't allow to join mid game
-    //TODO: check if player can bet
-    operator.addPlayer(data)
-    if(!timerStarted){
-      let timer = 15
-      timerStarted = true
-    setInterval(function() {
-      if(timer > 0){
-        console.log(timer)
-        io.emit('timer',timer)
-      }
-      if(--timer < 0){
-        if(!gameStarted){
-          io.emit('bettingOver',0)
-          operator.startGame()
-          let playerCount = operator.getPlayerCount()
-          io.emit('playerCount',playerCount)
+    if(!gameStarted){
+      operator.addPlayer(data)
+      if(!timerStarted){
+        timer = 15
+        timerStarted = true
+      let firstCountDown = setInterval(function() {
+        if(timer > 0){
+          console.log(timer)
+          io.emit('timer',timer)
         }
-        gameStarted = true
-        //timer = 10
+        //TODO: stop
+        if(--timer < 0){
+          if(!gameStarted){
+            io.emit('bettingOver',0)
+            operator.startGame()
+            let playerCount = operator.getPlayerCount()
+            io.emit('playerCount',playerCount)
+            clearInterval(firstCountDown)
+          }
+          gameStarted = true
       }
     }, 1000)
     }
+    }
   })
 
-  //DATA => username
   socket.on('getCards',data =>{
     console.log(data)
     let cards = operator.getPlayer(data)
@@ -103,18 +104,63 @@ io.on('connection', (socket) => {
       case "stand":
         operator.playerStand(username)
         if(operator['_roundOver']){
-        io.emit('giveDealerMore',operator.getDealer())
-        operator.getGameOverPlayers()
+          console.log("ROUNDOVER")
+          io.emit('giveDealerMore',operator.getDealer())
+          let gameOverState = operator.getGameOverPlayers()
+          operator.gameOver()
+        gameStarted = false
+        timerStarted = false
+        io.emit('gameOver',gameOverState)
+        break
         }
         currentPlayer = operator.getCurrentPlayerUsername()
         io.emit('playerTurn',currentPlayer)
         break
+      //TODO: IMPLEMENT THESE
       case "split":
         break
       case "double":
         break
     }
-    //operator.writeAllCards()
+  })
+
+  socket.on('newGame',data => {
+    console.log("newGame")
+    operator.clearPlayerHands()
+    if(!gameStarted){
+      //TODO: new player
+      //operator.addPlayer(data)
+      if(!timerStarted){
+        timer = 15
+        timerStarted = true
+      let countdown = setInterval(function() {
+        if(timer > 0){
+          console.log(timer)
+          io.emit('timer',timer)
+        }
+        //TODO: stop
+        if(--timer < 0){
+          if(!gameStarted){
+            console.log("NEW ROUND STARTING")
+            io.emit('bettingOver',0)
+            operator.startGame()
+            let playerCount = operator.getPlayerCount()
+            io.emit('playerCount',playerCount)
+            gameStarted = true
+            clearInterval(countdown)
+          }         
+      }
+    }, 1000)
+    }
+    }
+  })
+
+  socket.on('addBet', data => {
+  //TODO: check if player can bet
+    let datas = data.split(':')
+    let value = datas[1]
+    //Returns the bet value or 0
+    io.emit('betACK',data)
   })
 });
 

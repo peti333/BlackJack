@@ -27,6 +27,7 @@ const dealer = document.getElementById('dealer')
 let profile = document.getElementById('profile')
 let playerHand = document.getElementById('playerHand')
 let dealerHand = document.getElementById('dealerHand')
+const popUp = document.getElementById('popUp')
 
 
 let betValue = 0
@@ -46,7 +47,7 @@ let playerIndex = 1
 //  First 2 cards for every player
 //
 socket.on('giveCards',data =>{
-
+    console.log(data)
     let getCards = data['_cards']
     let getUsername = data['_username']
     if(getUsername === username.value){
@@ -65,7 +66,7 @@ socket.on('giveCards',data =>{
 //  Recieve one card to player
 //
 socket.on('giveCard',data =>{
-    //console.log(data)
+    console.log(data)
     let getCards = data['_cards']
     let getUsername = data['_username']
 
@@ -82,11 +83,6 @@ socket.on('giveCard',data =>{
 })
 
 
-//TODO: REMOVE
-socket.on('hitBroadcast', data=> {
-    //console.log(data)
-})
-
 //
 //  Timer information: countdown
 //
@@ -94,6 +90,7 @@ socket.on('timer', data=> {
     //console.log("timer: " + data)
     timer.innerHTML = "<p>" + data +"</p>"
 })
+
 
 
 //
@@ -137,6 +134,8 @@ socket.on('giveDealerMore',data => {
     for(let i = 2; i < getCards.length; i++){
         dealerHand.innerHTML += '<div class="card">' + getCards[i]['suit'] + ':' + getCards[i]['value'] + '</div>'
     }
+
+    timer.hidden = false
     
 })
 
@@ -165,6 +164,46 @@ socket.on('playerTurn',data => {
 
 socket.on('playerCount',data => {
     playerCount = data
+})
+
+socket.on('betACK', data => {
+    betValue += betAddValue
+    betCircle.innerHTML = "<p>" + betValue + "$ </p>"
+})
+
+socket.on('gameOver', data => {
+    console.log("GAMEOVER")
+    for(let i = 0; i < playerCount; i++){
+        if(data[i][0] == username.value){
+            switch(data[i][1]){
+                case -1:
+                    popUp.innerText = "You lost"
+                    break
+                case 0:
+                    popUp.innerText = "You tie"
+                    break
+                case 1:
+                    popUp.innerText = "You win"
+                    break
+            }
+            popUp.hidden = false
+        }
+    }
+    playerHand.innerHTML = ""
+    dealerHand.innerHTML = ""
+    console.log(table.children)
+    while(table.children.length > 2){
+        table.children[table.children.length - 1].remove()
+    }
+    betAddValue = 0
+    betFive.hidden = false
+    betTwenty.hidden = false
+    betFifty.hidden = false
+    betHundred.hidden = false
+    dealer.hidden = true  
+    timer.hidden = false
+
+    socket.emit('newGame',username.value)
 })
 
 //  -------
@@ -238,6 +277,5 @@ betHundred.addEventListener('click', e => {
 })
 
 betCircle.addEventListener('click', e => {
-    betValue += betAddValue
-    betCircle.innerHTML = "<p>" + betValue + "$ </p>"
+    socket.emit('addBet', username.value + ":" + betAddValue)
 })
