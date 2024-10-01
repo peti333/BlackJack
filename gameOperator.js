@@ -131,9 +131,8 @@ class GameOperator{
         //GET PLAYERS ELIGIBLE TO WIN
         let activePlayers = this._players
         let playerSum = 0
-        let dealerSum = 0
+        let dealerSum = this._dealer.getSum()[0]
         for(let i = 0; i < activePlayers.length; i++){
-            
             playerSum = activePlayers[i].getSum()
             if(playerSum.length == 2 && playerSum[1] <= 21){
                 playerSum = playerSum[1]
@@ -141,8 +140,7 @@ class GameOperator{
             else{
                 playerSum = playerSum[0]
             }
-            dealerSum = this._dealer.getSum()[0]
-            if(playerSum > dealerSum || dealerSum > 21){
+            if((playerSum > dealerSum || dealerSum > 21) && playerSum <= 21){
                 this.playerWin(activePlayers[i].getUsername())
             }
             else if(playerSum == dealerSum){

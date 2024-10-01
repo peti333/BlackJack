@@ -19,7 +19,7 @@ const betFive = document.getElementById('betFive')
 const betTwenty = document.getElementById('betTwenty')
 const betFifty = document.getElementById('betFifty')
 const betHundred = document.getElementById('betHundred')
-const betCircle = document.getElementById('bet')
+let betCircle = document.getElementById('bet')
 const timer = document.getElementById('timer')
 const bets = document.getElementById('bets')
 const actions = document.getElementById('actions')
@@ -182,6 +182,7 @@ socket.on('betACK', data => {
 socket.on('requestNewGame',data => {
     playerIndex = 1
     console.log("GAMEOVER")
+    playerHand = document.getElementById('playerHand')
     playerHand.innerHTML = ""
     dealerHand.innerHTML = ""
     while(table.children.length > 2){
@@ -190,7 +191,11 @@ socket.on('requestNewGame',data => {
     dealed = 0
     betAddValue = 0
     betValue = 0
+    betCircle = document.getElementById('bet')
     betCircle.innerHTML = '<p> 0$ </p>'
+    betCircle.addEventListener('click', e => {
+        socket.emit('addBet', username.value + ":" + betAddValue)
+    })
     betFive.hidden = false
     betTwenty.hidden = false
     betFifty.hidden = false
@@ -294,4 +299,8 @@ betHundred.addEventListener('click', e => {
 
 betCircle.addEventListener('click', e => {
     socket.emit('addBet', username.value + ":" + betAddValue)
+})
+
+window.addEventListener('beforeunload', e => {
+    socket.emit('playerDisconnect',username.value)
 })

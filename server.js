@@ -26,15 +26,29 @@ const operator = new gameOperator();
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+app.use(express.static('public'));
+
+//DATABASE
+const mysql = require('mysql2');
+const database = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'BlackJackDatabase'
+});
+
+database.connect((err) => {
+  if (err) {
+    console.error('Error connecting to the database:', err.stack);
+  }
+})
+
+
 const Player = require("./player");
 
-const app = express();
-
-const server = http.createServer(app);
-
-const io = socketIo(server);
-
-app.use(express.static('public'));
 
 let timerStarted = false
 let gameStarted = false
@@ -98,9 +112,16 @@ io.on('connection', (socket) => {
           io.emit('giveCard',cards)
           if(canHit[1]){
             socket.emit('playerLose',0)
-          } 
+            action = "stand"
+          }
+          else{
+            break
+          }
         }
-        action = "stand"
+        else{
+          break
+        }
+        
       case "stand":
         console.log("stand")
         operator.playerStand(username)
@@ -130,7 +151,6 @@ io.on('connection', (socket) => {
       timerStarted = true
       timer = 5
       let wait = setInterval(function() {
-        console.log("waiting: " + timer)
         io.emit('timer',timer)
         if(--timer < 0){
           timerStarted = false
@@ -144,7 +164,6 @@ io.on('connection', (socket) => {
 
 
   socket.on('newGame',data => {
-    console.log("newGame")
     operator.clearPlayerHands()
     if(!gameStarted){
       //TODO: new player
@@ -157,7 +176,6 @@ io.on('connection', (socket) => {
           console.log(timer)
           io.emit('timer',timer)
         }
-        //TODO: stop
         if(--timer < 0){
           if(!gameStarted){
             console.log("NEW ROUND STARTING")
@@ -179,7 +197,12 @@ io.on('connection', (socket) => {
     let value = datas[1]
     let username = datas[0]
 
-    io.emit('betACK',operator.getPlayer(username).addBet(value))
+    socket.emit('betACK',operator.getPlayer(username).addBet(value))
+  })
+  
+  socket.on('playerDisconnect', data => {
+    operator.removePlayer(data)
+    console.log(data + " has disconnected")
   })
 });
 
