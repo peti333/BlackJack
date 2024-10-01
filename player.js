@@ -113,6 +113,9 @@ class Player{
     getBet(to){
         return this._bet
     }
+    getBalance(){
+        return this._balance
+    }
 }
 
 module.exports = Player

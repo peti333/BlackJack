@@ -1,5 +1,6 @@
 const socket = io('http://localhost:3000')
 const loginButton = document.getElementById('loginButton')
+const registerButton = document.getElementById('registerButton')
 const loginForm = document.getElementById('login')
 const username = document.getElementById('usernameInput')
 const password = document.getElementById('passwordInput')
@@ -28,6 +29,7 @@ let profile = document.getElementById('profile')
 let playerHand = document.getElementById('playerHand')
 let dealerHand = document.getElementById('dealerHand')
 const popUp = document.getElementById('popUp')
+const balance = document.getElementById('balance')
 
 
 let betValue = 0
@@ -47,7 +49,7 @@ let playerIndex = 1
 //  First 2 cards for every player
 //
 socket.on('giveCards',data =>{
-    //(data)
+    console.log(data)
     let getCards = data['_cards']
     let getUsername = data['_username']
     if(getUsername === username.value){
@@ -179,6 +181,10 @@ socket.on('betACK', data => {
     }
 })
 
+socket.on('balanceUPDT', data => {
+    balance.innerHTML = data + '$' 
+})
+
 socket.on('requestNewGame',data => {
     playerIndex = 1
     console.log("GAMEOVER")
@@ -193,9 +199,11 @@ socket.on('requestNewGame',data => {
     betValue = 0
     betCircle = document.getElementById('bet')
     betCircle.innerHTML = '<p> 0$ </p>'
+    /*
     betCircle.addEventListener('click', e => {
         socket.emit('addBet', username.value + ":" + betAddValue)
     })
+    */
     betFive.hidden = false
     betTwenty.hidden = false
     betFifty.hidden = false
@@ -241,13 +249,15 @@ loginButton.addEventListener('click', e => {
     profile.innerHTML = '<p>' + username.value + '</p>'
     bets.hidden = false
     loginButton.hidden = true
+    registerButton.hidden = true
     username.hidden = true
     password.hidden = true
     userlabel.hidden = true
     passwordlabel.hidden = true
     title.hidden = true
     table.hidden = false
-    navbar.hidden = false
+    //navbar.hidden = false
+    navbar.style.visibility = 'visible'
     timer.hidden = false
 })
 
@@ -273,11 +283,6 @@ doubleDownButton.addEventListener('click', e => {
     socket.emit('action',data)
 })
 
-
-// NAVBAR BUTTONS
-rules.addEventListener('click', e => {
-    rules.style.backgroundColor = "purple"
-})
 
 
 // BET BUTTONS

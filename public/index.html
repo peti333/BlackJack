@@ -9,11 +9,17 @@
     <script defer src="script.js"></script>
 </head>
 <body>
-    <ul id="navbar" hidden>
-        <li>Peti's Casino</li>
-        <li id="leaderBoard">Leaderboard</li>
-        <li id="rules">Rules</li>
-    </ul>
+    <nav id="navbar" style="visibility: hidden;">
+        <div id="leftNav">
+            <a id="rules" class="navElement">Rules</a>
+        </div>
+        <div id="midNav">
+            <a id="leaderBoard" class="navElement">Leaderboard</a>
+        </div>
+        <div id="rightNav">
+            <p id="balance" class="navElement">100$</p>
+        </div>
+    </nav>
     <div id="popUp" hidden></div>
     <div id="title">Peti's Casino</div>
     <div id="timer" hidden><p></p></div>
@@ -23,6 +29,7 @@
         <label id="passwordLabel" class="loginLabel">Password:</label>
         <input type="text" id="passwordInput" class="textInput">
         <input type="button" id="loginButton" value="login">
+        <input type="button" id="registerButton" value="register">
     </form>
     <div id="table" hidden>
         <div id="dealer" hidden>

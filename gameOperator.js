@@ -85,7 +85,7 @@ class GameOperator{
         }  
     }
     roundOver(){
-        let activePlayers = this._players.filter(n => !this._lostPlayers.includes(n))
+        let activePlayers = this._players
         if(activePlayers.length >= 1){
             this._roundOver = true
             let sum = this._dealer.getSum()[0]

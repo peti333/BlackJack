@@ -32,6 +32,7 @@ const io = socketIo(server);
 app.use(express.static('public'));
 
 //DATABASE
+/*
 const mysql = require('mysql2');
 const database = mysql.createConnection({
   host: 'localhost',
@@ -45,7 +46,7 @@ database.connect((err) => {
     console.error('Error connecting to the database:', err.stack);
   }
 })
-
+*/
 
 const Player = require("./player");
 
@@ -155,6 +156,7 @@ io.on('connection', (socket) => {
         if(--timer < 0){
           timerStarted = false
           timer = 15
+          gameStarted = false
           io.emit('requestNewGame',1)
           clearInterval(wait)
         }
@@ -165,9 +167,8 @@ io.on('connection', (socket) => {
 
   socket.on('newGame',data => {
     operator.clearPlayerHands()
+    socket.emit('balanceUPDT',operator.getPlayer(data).getBalance())
     if(!gameStarted){
-      //TODO: new player
-      //operator.addPlayer(data)
       if(!timerStarted){
         timer = 15
         timerStarted = true
@@ -198,6 +199,7 @@ io.on('connection', (socket) => {
     let username = datas[0]
 
     socket.emit('betACK',operator.getPlayer(username).addBet(value))
+    socket.emit('balanceUPDT',operator.getPlayer(username).getBalance())
   })
   
   socket.on('playerDisconnect', data => {

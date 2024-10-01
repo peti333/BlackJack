@@ -1,10 +1,11 @@
 body{
-    background-color: rgb(231, 231, 231);
+    background-color: #1b1422;
 }
 
 #title{
     text-align: center;
     font-size: 8em;
+    color: white;
 }
 
 #login{
@@ -19,6 +20,7 @@ body{
     padding: 8px;
     font-size: 16px;
     margin: 0 auto;
+    color:white;
 }
 
 .textInput{
@@ -29,7 +31,8 @@ body{
 
 #loginButton {
     padding: 10px;
-    background-color: #7f7f7f;
+    background-color: #453356;
+    border-radius: 2px;
     color: white;
     font-size: 16px;
     border: none;
@@ -37,12 +40,28 @@ body{
 }
   
 #loginButton:hover{
-    background-color: #4b4b4b;
+    background-color: #915b8b;
 }
+
+#registerButton{
+    margin-top: 10px;
+    border-radius: 2px;
+    padding: 10px;
+    background-color: #FE9898;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+#registerButton:hover{
+    background-color: #be78b7;
+}
+
   
 #actions{
-    height: 20em;
-    width: 10em;
+    height: 12em;
+    width: 8em;
     position: absolute;
     bottom:2em;
     right:2em;
@@ -50,25 +69,23 @@ body{
 }
 
 
-
 #actions > div{
     border: 2px solid black;
     border-radius: 20px;
-    background-color: green;
+    background-color: #E4B1F0;
     position: absolute;
-    height: 5em;
-    width: 10em;
+    height: 3em;
+    width: 8em;
     right:0em;
 }
 
 
 #actions > div:hover{
-    background-color: rgb(0, 94, 0);
+    background-color: #95739c;
 }
 
 #actions > div > p{
-    margin:2em;
-    color:white;
+    color:black;
 }
 
 #hit{
@@ -76,15 +93,15 @@ body{
 }
 
 #stand{
-    top:5em;
+    top:3em;
 }
 
 #split{
-    top:10em;
+    top:6em;
 }
 
 #doubleDown{
-    top:15em;
+    top:9em;
 }
 
 #table{
@@ -96,30 +113,39 @@ body{
     margin-right: auto; 
     height: 80%;
     width: 80%;
-    background-color: rgb(80, 80, 80);
+    background-color: #8156ac;
+    border-radius: 25%;
 }
 
 #navbar{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
     position: absolute;
-    top:-1em;
-    left:-1em;
+    top:-0.5em;
     height: 3em;
     width: 100%;
-    background-color: grey;
+    background-color: #8160a2;
     list-style-type: none;
+    padding: 0;
+    left:0;
 }
 
-#navbar > li{
-    display: inline;
+#midNav{
+    position: absolute;
+    left:50%;
+    transform: translateX(-50%);
+}
+
+.navElement{
     font-size: 2em;
-    background-color: red;
+    background-color: #6c3d9b;
 }
-
 
 
 #bets{
-    height: 20em;
-    width: 10em;
+    height: 12em;
+    width: 8em;
     position: absolute;
     bottom:2em;
     right:2em;
@@ -129,19 +155,19 @@ body{
 #bets > div{
     border: 2px solid black;
     border-radius: 20px;
-    background-color: red;
+    background-color: #E4B1F0;
     position: absolute;
-    height: 5em;
-    width: 10em;
+    height: 3em;
+    width: 8em;
 }
 
 #bets > div:hover{
-    background-color: rgb(183, 0, 0);
+    background-color: #95739c;
 }
 
 #bets > div > p{
-    margin:2em;
-    color:white;
+    /*margin:2em;*/
+    color:black;
 }
 
 #betFive{
@@ -149,26 +175,26 @@ body{
 }
 
 #betTwenty{
-    top:5em;
+    top:3em;
 }
 
 #betFifty{
-    top:10em;
+    top:6em;
 }
 
 #betHundred{
-    top:15em;
+    top:9em;
 }
 
 #bet{
     margin:2em;
-    color:white;
+    color:black;
     position: absolute;
     right: 10em;
     bottom: 2em;
     height: 75px;
     width: 75px;
-    background-color: #ff0000;
+    background-color: #E4B1F0;
     border: 3px solid black;
     border-radius: 50%;
     display: inline-block;
@@ -176,7 +202,7 @@ body{
 }
 
 #bet:hover{
-    background-color: #980202;
+    background-color: #95739c;
 }
 
 #bet > p{
@@ -234,14 +260,14 @@ body{
     bottom:4em;
     width: 12em;
     height: 4em;
-    background-color: blue;
+    background-color: #FFE1FF;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
 }
 
 .activeProfile{
-    border:1px solid red;
+    border:2px solid #471871;
 }
 
 #profile > p{
@@ -256,7 +282,7 @@ body{
     top:10%;
     width: 12em;
     height: 4em;
-    background-color: blue;
+    background-color: #F8FF95;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
@@ -301,7 +327,7 @@ body{
     top:0em;
     width: 12em;
     height: 4em;
-    background-color: blue;
+    background-color: #FFE1FF;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
