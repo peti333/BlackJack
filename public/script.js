@@ -153,7 +153,7 @@ socket.on('playerTurn',data => {
     else{
         actions.hidden = true
         if(otherPlayer){
-            otherPlayer.style.border = "1px solid red"
+            otherPlayer.style.border = "2px solid #1e0930"
         }
         profile.classList.remove("activeProfile")
     }
@@ -199,11 +199,11 @@ socket.on('requestNewGame',data => {
     betValue = 0
     betCircle = document.getElementById('bet')
     betCircle.innerHTML = '<p> 0$ </p>'
-    /*
+    
     betCircle.addEventListener('click', e => {
         socket.emit('addBet', username.value + ":" + betAddValue)
     })
-    */
+    
     betFive.hidden = false
     betTwenty.hidden = false
     betFifty.hidden = false

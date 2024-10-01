@@ -300,7 +300,7 @@ body{
     top:10%;
     width: 12em;
     height: 4em;
-    background-color: blue;
+    background-color: #FFE1FF;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
@@ -315,7 +315,7 @@ body{
     display:flex;
     width: 12em;
     height: 4em;
-    background-color: blue;
+    background-color: #FFE1FF;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
