@@ -8,7 +8,7 @@ class Player{
     _username = "default"
     _lose = 0
     _over = false
-    _bet = 0
+    _bet = parseInt(0)
     _balance = 100
     constructor(username = "default", balance = 100){
         this._username = username
@@ -100,6 +100,15 @@ class Player{
     setBet(to){
         this._bet = to
         this._balance -= to
+    }
+    addBet(plus){
+        let result = 0
+        if(this._balance - plus >= 0){
+            this._bet -= ((-1) * plus)
+            this._balance -= plus
+            result = plus
+        }
+        return result
     }
     getBet(to){
         return this._bet

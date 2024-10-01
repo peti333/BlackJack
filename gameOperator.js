@@ -129,11 +129,11 @@ class GameOperator{
     }
     checkWin(){
         //GET PLAYERS ELIGIBLE TO WIN
-        let activePlayers = this._players.filter(n => !this._lostPlayers.includes(n))
+        let activePlayers = this._players
         let playerSum = 0
         let dealerSum = 0
         for(let i = 0; i < activePlayers.length; i++){
-            //console.log(activePlayers[i])
+            
             playerSum = activePlayers[i].getSum()
             if(playerSum.length == 2 && playerSum[1] <= 21){
                 playerSum = playerSum[1]
@@ -172,7 +172,7 @@ class GameOperator{
          let tempPlayer
          for(let i = 0; i < this._players.length; i++){
             tempPlayer = this._players[i]
-            data.push(tempPlayer.getUsername(),tempPlayer.getLose())
+            data.push([tempPlayer.getUsername(),tempPlayer.getLose()])
          }
          return data
     }

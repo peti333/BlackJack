@@ -313,6 +313,10 @@ body{
 }
 
 #popUp{
+    z-index: 10;
+    color:white;
+    font-size: 6em;
+    text-align: center;
     position: absolute;
     background-color: grey;
     opacity: 75%;

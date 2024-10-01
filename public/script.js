@@ -47,7 +47,7 @@ let playerIndex = 1
 //  First 2 cards for every player
 //
 socket.on('giveCards',data =>{
-    console.log(data)
+    //(data)
     let getCards = data['_cards']
     let getUsername = data['_username']
     if(getUsername === username.value){
@@ -66,7 +66,7 @@ socket.on('giveCards',data =>{
 //  Recieve one card to player
 //
 socket.on('giveCard',data =>{
-    console.log(data)
+    //console.log(data)
     let getCards = data['_cards']
     let getUsername = data['_username']
 
@@ -112,8 +112,8 @@ socket.on('bettingOver', data => {
 //  Dealer first 2 cards
 //
 socket.on('giveDealer',data => {
-    console.log(data)
     dealerHand = document.getElementById('dealerHand')
+    console.log("dealerHand: " + dealerHand)
     if(dealed == 0){
         dealerHand.innerHTML += '<div class="card">' + data[0]['suit'] + ':' + data[0]['value'] + '</div>'
         dealerHand.innerHTML += '<div class="card">' + data[1]['suit'] + ':' + data[1]['value'] + '</div>'
@@ -166,18 +166,49 @@ socket.on('playerCount',data => {
     playerCount = data
 })
 
+socket.on('playerLose', data => {
+    popUp.innerText = "You lose"
+    popUp.hidden = false
+    actions.hidden = true
+})
+
 socket.on('betACK', data => {
+    if(data != 0){   
     betValue += betAddValue
     betCircle.innerHTML = "<p>" + betValue + "$ </p>"
+    }
+})
+
+socket.on('requestNewGame',data => {
+    playerIndex = 1
+    console.log("GAMEOVER")
+    playerHand.innerHTML = ""
+    dealerHand.innerHTML = ""
+    while(table.children.length > 2){
+        table.children[table.children.length - 1].remove()
+    }
+    dealed = 0
+    betAddValue = 0
+    betValue = 0
+    betCircle.innerHTML = '<p> 0$ </p>'
+    betFive.hidden = false
+    betTwenty.hidden = false
+    betFifty.hidden = false
+    betHundred.hidden = false
+    actions.hidden = true
+    dealer.hidden = true  
+    timer.hidden = false
+    popUp.hidden = true
+
+    socket.emit('newGame',username.value)
 })
 
 socket.on('gameOver', data => {
-    console.log("GAMEOVER")
-    for(let i = 0; i < playerCount; i++){
+    for(let i = 0; i < data.length; i++){
         if(data[i][0] == username.value){
             switch(data[i][1]){
                 case -1:
-                    popUp.innerText = "You lost"
+                    popUp.innerText = "You lose"
                     break
                 case 0:
                     popUp.innerText = "You tie"
@@ -189,21 +220,8 @@ socket.on('gameOver', data => {
             popUp.hidden = false
         }
     }
-    playerHand.innerHTML = ""
-    dealerHand.innerHTML = ""
-    console.log(table.children)
-    while(table.children.length > 2){
-        table.children[table.children.length - 1].remove()
-    }
-    betAddValue = 0
-    betFive.hidden = false
-    betTwenty.hidden = false
-    betFifty.hidden = false
-    betHundred.hidden = false
-    dealer.hidden = true  
-    timer.hidden = false
-
-    socket.emit('newGame',username.value)
+    
+    socket.emit('postGame',username.value)
 })
 
 //  -------
@@ -215,8 +233,6 @@ loginButton.addEventListener('click', e => {
     //console.log(username.value + " " + password.value)
     const data = username.value   // + ";password:" + password.value
     socket.emit('loginSubmit',data)
-
-
     profile.innerHTML = '<p>' + username.value + '</p>'
     bets.hidden = false
     loginButton.hidden = true

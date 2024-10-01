@@ -39,6 +39,7 @@ app.use(express.static('public'));
 let timerStarted = false
 let gameStarted = false
 let timer = 15
+let waiting = true
 
 io.on('connection', (socket) => {
   socket.on('sendData', data =>{
@@ -95,13 +96,13 @@ io.on('connection', (socket) => {
         if(canHit[0]){
           let cards = operator.getPlayer(username)
           io.emit('giveCard',cards)
-          if(!canHit[1]){
-            break
-          }
-          
+          if(canHit[1]){
+            socket.emit('playerLose',0)
+          } 
         }
         action = "stand"
       case "stand":
+        console.log("stand")
         operator.playerStand(username)
         if(operator['_roundOver']){
           console.log("ROUNDOVER")
@@ -123,6 +124,24 @@ io.on('connection', (socket) => {
         break
     }
   })
+
+  socket.on('postGame', data=>{
+    if(!timerStarted){
+      timerStarted = true
+      timer = 5
+      let wait = setInterval(function() {
+        console.log("waiting: " + timer)
+        io.emit('timer',timer)
+        if(--timer < 0){
+          timerStarted = false
+          timer = 15
+          io.emit('requestNewGame',1)
+          clearInterval(wait)
+        }
+      },1000)
+    }
+  })
+
 
   socket.on('newGame',data => {
     console.log("newGame")
@@ -156,11 +175,11 @@ io.on('connection', (socket) => {
   })
 
   socket.on('addBet', data => {
-  //TODO: check if player can bet
     let datas = data.split(':')
     let value = datas[1]
-    //Returns the bet value or 0
-    io.emit('betACK',data)
+    let username = datas[0]
+
+    io.emit('betACK',operator.getPlayer(username).addBet(value))
   })
 });
 
