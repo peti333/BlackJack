@@ -53,7 +53,7 @@ const Player = require("./player");
 
 let timerStarted = false
 let gameStarted = false
-let timer = 15
+let timer = 10
 let waiting = true
 
 io.on('connection', (socket) => {
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
     if(!gameStarted){
       operator.addPlayer(data)
       if(!timerStarted){
-        timer = 15
+        timer = 10
         timerStarted = true
       let firstCountDown = setInterval(function() {
         if(timer > 0){
@@ -155,7 +155,7 @@ io.on('connection', (socket) => {
         io.emit('timer',timer)
         if(--timer < 0){
           timerStarted = false
-          timer = 15
+          timer = 10
           gameStarted = false
           io.emit('requestNewGame',1)
           clearInterval(wait)
@@ -170,7 +170,7 @@ io.on('connection', (socket) => {
     socket.emit('balanceUPDT',operator.getPlayer(data).getBalance())
     if(!gameStarted){
       if(!timerStarted){
-        timer = 15
+        timer = 10
         timerStarted = true
       let countdown = setInterval(function() {
         if(timer > 0){

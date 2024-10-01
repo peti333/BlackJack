@@ -31,7 +31,7 @@ body{
 
 #loginButton {
     padding: 10px;
-    background-color: #453356;
+    background-color: #be78b7;
     border-radius: 2px;
     color: white;
     font-size: 16px;
@@ -40,14 +40,14 @@ body{
 }
   
 #loginButton:hover{
-    background-color: #915b8b;
+    background-color: #7c4d77;
 }
 
 #registerButton{
     margin-top: 10px;
     border-radius: 2px;
     padding: 10px;
-    background-color: #FE9898;
+    background-color: #be78b7;
     color: white;
     font-size: 16px;
     border: none;
@@ -55,7 +55,7 @@ body{
 }
 
 #registerButton:hover{
-    background-color: #be78b7;
+    background-color: #7c4d77;
 }
 
   
@@ -139,7 +139,6 @@ body{
 
 .navElement{
     font-size: 2em;
-    background-color: #6c3d9b;
 }
 
 
@@ -227,6 +226,8 @@ body{
     background-color: purple;
     height: 8em;
     width: 6em;
+    border:1px solid black;
+    margin-right: -1em;
 }
 
 #playerHand{
@@ -243,7 +244,7 @@ body{
 
 #dealerHand{
     position: absolute;
-    right: 50%;
+    left:40%;
     top: 4em;
     width: 10em;
     height: 5em;
@@ -267,7 +268,7 @@ body{
 }
 
 .activeProfile{
-    border:2px solid #471871;
+    border:2px solid #1e0930;
 }
 
 #profile > p{
