@@ -244,7 +244,7 @@ body{
 
 #dealerHand{
     position: absolute;
-    left:40%;
+    left:42%;
     top: 4em;
     width: 10em;
     height: 5em;
@@ -324,7 +324,7 @@ body{
 #dealerName{
     position: absolute;
     display:flex;
-    left: 40%;
+    left: 42%;
     top:0em;
     width: 12em;
     height: 4em;
