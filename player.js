@@ -110,7 +110,7 @@ class Player{
         }
         return result
     }
-    getBet(to){
+    getBet(){
         return this._bet
     }
     getBalance(){

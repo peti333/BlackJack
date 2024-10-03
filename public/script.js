@@ -1,3 +1,4 @@
+//const e = require("express")
 const socket = io('http://localhost:3000')
 const loginButton = document.getElementById('loginButton')
 const registerButton = document.getElementById('registerButton')
@@ -200,10 +201,10 @@ socket.on('requestNewGame',data => {
     betCircle = document.getElementById('bet')
     betCircle.innerHTML = '<p> 0$ </p>'
     
-    betCircle.addEventListener('click', e => {
+    /*betCircle.addEventListener('click', e => {
         socket.emit('addBet', username.value + ":" + betAddValue)
     })
-    
+    */
     betFive.hidden = false
     betTwenty.hidden = false
     betFifty.hidden = false
@@ -237,6 +238,38 @@ socket.on('gameOver', data => {
     socket.emit('postGame',username.value)
 })
 
+socket.on('registerACK', data => {
+    if(data == 1){
+        console.log('Register successfull')
+    }
+    else{
+        console.log('Register failed')
+    }
+})
+
+socket.on('loginACK', data => {
+    if(data == 1){
+        console.log('Login successfull')
+        profile.innerHTML = '<p>' + username.value + '</p>'
+        bets.hidden = false
+        loginButton.hidden = true
+        registerButton.hidden = true
+        username.hidden = true
+        password.hidden = true
+        userlabel.hidden = true
+        passwordlabel.hidden = true
+        title.hidden = true
+        table.hidden = false
+        //navbar.hidden = false
+        navbar.style.visibility = 'visible'
+        timer.hidden = false
+        socket.emit('loginSubmit',username.value)
+    }
+    else{
+        console.log('Login failed')
+    }
+})
+
 //  -------
 //  BUTTONS
 //  -------
@@ -244,21 +277,17 @@ socket.on('gameOver', data => {
 // LOGIN BUTTON
 loginButton.addEventListener('click', e => {
     //console.log(username.value + " " + password.value)
-    const data = username.value   // + ";password:" + password.value
-    socket.emit('loginSubmit',data)
-    profile.innerHTML = '<p>' + username.value + '</p>'
-    bets.hidden = false
-    loginButton.hidden = true
-    registerButton.hidden = true
-    username.hidden = true
-    password.hidden = true
-    userlabel.hidden = true
-    passwordlabel.hidden = true
-    title.hidden = true
-    table.hidden = false
-    //navbar.hidden = false
-    navbar.style.visibility = 'visible'
-    timer.hidden = false
+    const data = [username.value,password.value]
+    socket.emit('clientLogin',data)
+    
+})
+
+// REGISTER BUTTON
+registerButton.addEventListener('click', e => {
+    const data = [username.value,password.value]
+
+
+    socket.emit('clientRegister',data)
 })
 
 

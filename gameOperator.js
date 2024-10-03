@@ -25,7 +25,8 @@ class GameOperator{
 
     //For future uses, for players that have played before
     addExistingPlayer(username,balance){
-
+        let newPlayer = new Player(username,balance)
+        this._players.push(newPlayer)
     }
     removePlayer(username){
         for(let i = 0; i < this._players.length; i++){
@@ -170,7 +171,7 @@ class GameOperator{
          let tempPlayer
          for(let i = 0; i < this._players.length; i++){
             tempPlayer = this._players[i]
-            data.push([tempPlayer.getUsername(),tempPlayer.getLose()])
+            data.push([tempPlayer.getUsername(),tempPlayer.getLose(),tempPlayer.getBalance()])
          }
          return data
     }

@@ -1,13 +1,5 @@
 /*
-TODO:
-  - server side betting
-  - player
-    - bet
-    - balance
-  - other players
-    - bet
   - buttons appearing in situations: double, split
-LATER:
   - dataBase
   - leaderboard
   - signing in
@@ -17,54 +9,50 @@ LATER:
     - cards
     - table
     - profile pictures
+  - admin page
 */
 // GAME
 const gameOperator = require("./gameOperator.js")
-const operator = new gameOperator();
+const operator = new gameOperator()
 
 // CONNECTION
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
-app.use(express.static('public'));
+const express = require('express')
+const http = require('http')
+const socketIo = require('socket.io')
+const app = express()
+const server = http.createServer(app)
+const io = socketIo(server)
+app.use(express.static('public'))
 
 //DATABASE
-/*
-const mysql = require('mysql2');
-const database = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'BlackJackDatabase'
-});
+const mysql = require('mysql2')
+const databaseHandler = require("./databaseHandler.js")
+const handler = new databaseHandler()
 
-database.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.stack);
-  }
-})
-*/
 
-const Player = require("./player");
+
+//const Player = require("./player");
 
 
 let timerStarted = false
 let gameStarted = false
 let timer = 10
-let waiting = true
+
+
+//SOCKET EVENTS
 
 io.on('connection', (socket) => {
   socket.on('sendData', data =>{
     console.log(data)
     socket.broadcast.emit('getData',data)
   })
+
+  //STARTING SCREEN
   socket.on('loginSubmit', data =>{
     console.log("user logged in: " + data)
     if(!gameStarted){
-      operator.addPlayer(data)
+      operator.addPlayer(data,handler.getUserBalance(data))
+      console.log(handler.getUserBalance(data))
       if(!timerStarted){
         timer = 10
         timerStarted = true
@@ -73,7 +61,6 @@ io.on('connection', (socket) => {
           console.log(timer)
           io.emit('timer',timer)
         }
-        //TODO: stop
         if(--timer < 0){
           if(!gameStarted){
             io.emit('bettingOver',0)
@@ -89,6 +76,35 @@ io.on('connection', (socket) => {
     }
   })
 
+
+  socket.on('clientRegister',data => {
+    console.log('Register attempt: ' + data)
+    if(!handler.checkIfUserExists(data[0])){
+      handler.createUser(data[0],data[1])
+      socket.emit('registerACK',1)
+    }
+    else{
+      socket.emit('registerACK',0)
+    }
+  })
+
+  socket.on('clientLogin',data => {
+    console.log('Login attempt: ' + data)
+    if(handler.checkIfUserExists(data[0])){
+      if(handler.checkPassword(data[0],data[1])){
+        socket.emit('loginACK',1)
+      }
+      else{
+        socket.emit('loginACK',0)
+      }
+    }
+    else{
+      socket.emit('loginACK',0)
+    }
+  })
+  
+
+  //GAME SCREEN
   socket.on('getCards',data =>{
     console.log(data)
     let cards = operator.getPlayer(data)
@@ -131,6 +147,7 @@ io.on('connection', (socket) => {
           io.emit('giveDealerMore',operator.getDealer())
           let gameOverState = operator.getGameOverPlayers()
           operator.gameOver()
+          handler.updateUserGameInfo(gameOverState)
         gameStarted = false
         timerStarted = false
         io.emit('gameOver',gameOverState)
