@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script defer src="adminScript.js"></script>
+    <title>ADMIN</title>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <h2>Current Users:</h2>
+    <h2>Current Game:</h2>
+    
+    <label for="optionsLabel"><h2>Browse Players:</h2></label>
+    <select id="optionsSelect" name="options">
+    </select>
+    <input id="playerInfoButton" type="button" value="Get player information"> 
+    <table id="playerInfoTable" hidden>
+        <tr><th>ID</th><th>Username</th><th>Balance</th><th>Wins</th><th>Ties</th><th>Losses</th><th>Joined</th></tr>
+    </table>
+    <h2>Create User:</h2>
+    <form>
+        <label>Username: </label><input id="usernameInput" type="text">
+        <label>Password: </label><input id="passwordInput" type="text">
+        <input id="RegisterButton" type="button" value="Register">
+    </form>
+</body>
+</html>

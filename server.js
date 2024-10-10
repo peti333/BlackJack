@@ -24,19 +24,26 @@ const server = http.createServer(app)
 const io = socketIo(server)
 app.use(express.static('public'))
 
+
+
 //DATABASE
 const mysql = require('mysql2')
 const databaseHandler = require("./databaseHandler.js")
 const handler = new databaseHandler()
 
 
-
-//const Player = require("./player");
-
-
 let timerStarted = false
 let gameStarted = false
 let timer = 10
+
+
+app.get('/admin', (req, res) => {
+  //if (req.session.username === 'admin') {
+    res.sendFile(__dirname + '/public/admin.html'); // Serve admin page
+  //} else {
+   //res.status(403).send('Forbidden'); // Return forbidden status if not admin
+  //}
+});
 
 
 //SOCKET EVENTS
@@ -48,11 +55,12 @@ io.on('connection', (socket) => {
   })
 
   //STARTING SCREEN
-  socket.on('loginSubmit', data =>{
+  socket.on('loginSubmit', async data =>{
     console.log("user logged in: " + data)
     if(!gameStarted){
-      operator.addPlayer(data,handler.getUserBalance(data))
-      console.log(handler.getUserBalance(data))
+      let balance = await handler.getUserBalance(data)
+      operator.addExistingPlayer(data,balance)
+      socket.emit('balanceUPDT',balance)
       if(!timerStarted){
         timer = 10
         timerStarted = true
@@ -77,9 +85,11 @@ io.on('connection', (socket) => {
   })
 
 
-  socket.on('clientRegister',data => {
+  socket.on('clientRegister', async data => {
     console.log('Register attempt: ' + data)
-    if(!handler.checkIfUserExists(data[0])){
+    let exists = await handler.checkIfUserExists(data[0])
+    console.log(exists)
+    if(!exists){
       handler.createUser(data[0],data[1])
       socket.emit('registerACK',1)
     }
@@ -88,10 +98,15 @@ io.on('connection', (socket) => {
     }
   })
 
-  socket.on('clientLogin',data => {
+  socket.on('clientLogin',async data => {
     console.log('Login attempt: ' + data)
-    if(handler.checkIfUserExists(data[0])){
+    let exists = await handler.checkIfUserExists(data[0])
+    if(!exists){
       if(handler.checkPassword(data[0],data[1])){
+        if(data[0] == 'admin'){
+          //socket.emit('loginACK',2)
+          socket.emit('redirectToAdmin', '/admin')
+        }
         socket.emit('loginACK',1)
       }
       else{
@@ -223,6 +238,23 @@ io.on('connection', (socket) => {
     operator.removePlayer(data)
     console.log(data + " has disconnected")
   })
+
+
+  socket.on('getAllUsernames', async data => {
+    let outData = await handler.getAllUsernames()
+    socket.emit('getAllUsernamesACK',outData)
+  })
+
+  socket.on('getUserInformation', async data => {
+    let outData = await handler.getUserInformation(data)
+    socket.emit('getUserInformationACK',outData)
+  })
+
+  socket.on('deleteUser', async data => {
+    let result = await handler.deleteUser(data)
+    socket.emit('deleteUserACK',result)
+  })
+
 });
 
 const port = process.env.PORT || 3000;

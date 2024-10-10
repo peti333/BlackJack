@@ -265,9 +265,18 @@ socket.on('loginACK', data => {
         timer.hidden = false
         socket.emit('loginSubmit',username.value)
     }
+    else if(data == 2){
+        console.log('admin login')
+        window.location.href = '/admin'
+    }
     else{
         console.log('Login failed')
     }
+})
+
+
+socket.on('redirectToAdmin', (url) => {
+    window.location.href = url
 })
 
 //  -------

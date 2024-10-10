@@ -39,7 +39,6 @@ class GameOperator{
         this._roundOver = false
         let drawnCard
         for(let j = 0; j < 2; j++){
-            
             for(let i = 0; i < this._players.length; i++){
                 drawnCard = this._cards.drawCard()
                 this._players[i].addCard(drawnCard.getSuit(),drawnCard.getValue())
@@ -141,6 +140,7 @@ class GameOperator{
             else{
                 playerSum = playerSum[0]
             }
+            this.playerTie(activePlayers[i].getUsername())
             if((playerSum > dealerSum || dealerSum > 21) && playerSum <= 21){
                 this.playerWin(activePlayers[i].getUsername())
             }

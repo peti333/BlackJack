@@ -140,7 +140,7 @@ database.query('SELECT * FROM userData', (err, results) => {
 database.end();
 */
 //TODO: check if changing * is optimal in queries
-
+//TODO: may need to switch to async functions and promises due to how mysql works
 
 class DatabaseHandler{
     database = null
@@ -163,51 +163,59 @@ class DatabaseHandler{
     }
 
     checkIfUserExists(username){
+      return new Promise((resolve,reject) => {
         return this.database.query('SELECT * FROM UserInformation WHERE username LIKE "' + username + '" ;', (err, results) => {
             if(err){
               console.error(err)
+              reject(err)
             } 
             else{
-              return (results.length != 0)
+              resolve(results.length != 0)
             }
           })
+      })
     }
 
     getUserInformation(username){
-        return this.database.query('SELECT * FROM UserInformation WHERE username LIKE "' + username + '" ;', (err, results) => {
+      return new Promise((resolve,reject) => {
+        return this.database.query('SELECT * FROM UserInformation WHERE username LIKE "' + username + '";', (err, results) => {
             if (err) {
               console.error(err)
+              reject(err)
             } else {
               if(results.length != 0){
-                return results[0]
+                resolve(results)
               }
               else{
-                return []
+                resolve([])
               }
             }
           })
+      })
     }
 
 
-    //TODO:
-    //RETURNS UNDEFINED
     getUserBalance(username){
-        this.database.query('SELECT * FROM UserInformation WHERE username LIKE "' + username + '" ;', (err, results) => {
+      return new Promise((resolve,reject) => {
+        return this.database.query('SELECT * FROM UserInformation WHERE username LIKE "' + username + '";', (err, results) => {
             if (err) {
               console.error(err)
-            } else {
+              reject(err)
+            } 
+            else{
               if(results.length != 0){
-                return results[0]['balance']
+                resolve(results[0]['balance'])
               }
               else{
-                return []
+                resolve(0)
               }
             }
           })
+      })
     }
 
     checkPassword(username, password){
-        return this.database.query('SELECT * FROM UserInformation WHERE username LIKE "' + username + '" ;', (err, results) => {
+        return this.database.query('SELECT * FROM UserInformation WHERE username LIKE "' + username + '";', (err, results) => {
             if (err) {
               console.error(err)
             }
@@ -237,6 +245,7 @@ class DatabaseHandler{
     }
 
     createUser(username,password){
+      console.log("Creating user: " + username + ", " + password)
         const hash = argon2.hash(password).then(hashedPassword => {
             this.database.execute('INSERT INTO UserInformation (username,password) VALUES ("' + username + '","' + hashedPassword + '");', (err,results) => {
                 if (err) {
@@ -262,6 +271,46 @@ class DatabaseHandler{
                 }
               })
         }
+    }
+
+    getAllUsernames(){
+      return new Promise((resolve,reject) => {
+        return this.database.query('SELECT username FROM UserInformation;', (err, results) => {
+            if (err) {
+              console.error(err)
+              reject(err)
+            } 
+            else{
+              if(results.length != 0){
+                console.log(results)
+                resolve(results)
+              }
+              else{
+                resolve(0)
+              }
+            }
+          })
+      })
+    }
+
+    deleteUser(username){
+      return new Promise((resolve,reject) => {
+        return this.database.execute('DELETE FROM UserInformation WHERE username LIKE "' + username + '";', (err, results) => {
+            if (err) {
+              console.error(err)
+              reject(err)
+            } 
+            else{
+              if(results.length != 0){
+                console.log(results)
+                resolve(username)
+              }
+              else{
+                resolve(0)
+              }
+            }
+          })
+      })
     }
 
     endConnection(){
