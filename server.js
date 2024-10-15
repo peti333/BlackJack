@@ -264,6 +264,16 @@ io.on('connection', (socket) => {
     socket.emit('getUserSignupDatesACK',result)
   })
 
+  socket.on('getUserBalanceCharts', async data => {
+    let result = await handler.getUserBalances()
+    socket.emit('getUserBalanceChartsACK', result)
+  })
+
+  socket.on('getWinRate', async data => {
+    let result = await handler.getWinRate()
+    socket.emit('getWinRateACK',result)
+  })
+
 });
 
 const port = process.env.PORT || 3000;

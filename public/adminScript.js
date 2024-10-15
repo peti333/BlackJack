@@ -17,8 +17,7 @@ const currentPlayerTable = document.getElementById('currentPlayerTable')
 //TODO: NPM INSTALL chart.js
 /*
 Charts:
- - Winrate pie chart
- - Player balance line chart?
+ - Player balances
  - Playing user count
 */
 
@@ -27,6 +26,10 @@ socket.emit('getAllUsernames','admin')
 socket.emit('getCurrentUsers','admin')
 
 socket.emit('getUserSignupDates' , 'admin')
+
+socket.emit('getUserBalanceCharts', 'admin')
+
+socket.emit('getWinRate','admin')
 
 socket.on('currentPlayerTableACK', data => {
     currentPlayerTable.innerHTML = ""
@@ -65,6 +68,80 @@ socket.on('getUserSignupDatesACK', data => {
                     grid: {
                         color: 'rgba(255, 255, 255, 0.5)'
                     }
+                }
+            }
+        }
+    })
+})
+
+//Need better data
+socket.on('getUserBalanceChartsACK', data => {
+    const chart = document.getElementById('UsersBalacesChart').getContext('2d')
+    const usernames = data.map(item => item.username)
+    const balances = data.map(item => item.balance)
+
+    const UserSignUpMonthChart = new Chart(chart, {
+        type:'bar',
+        data: {
+            labels:usernames,
+            datasets: [{
+                label: 'Players',
+                data: balances,
+                backgroundColor: 'rgba(190, 120, 183, 1)',
+                borderColor: 'rgba(0, 0, 0, 1)',
+                borderWidth:1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.5)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.5)'
+                    }
+                }
+            }
+        }
+    })
+})
+
+
+
+socket.on('getWinRateACK', data => {
+    const chart = document.getElementById('WinRateChart').getContext('2d')
+    const wins = data[0]['wins']
+    const ties = data[0]['ties']
+    const losses = data[0]['losses']
+
+    const UserSignUpMonthChart = new Chart(chart, {
+        type:'pie',
+        data: {
+            labels:[
+                'Wins',
+                'Ties',
+                'Losses'
+            ],
+            datasets: [{
+                data: [wins,ties,losses],
+                backgroundColor: ['rgba(190, 120, 183, 1)', 'rgba(124, 77, 119,1)','rgba(228, 177, 240,1)'],
+                borderColor: 'rgba(0, 0, 0, 1)',
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Total Wins, Ties, and Losses'
                 }
             }
         }

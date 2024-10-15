@@ -42,7 +42,7 @@ body{
 }
   
 #loginButton:hover{
-    background-color: #7c4d77;
+    background-color: rgb(124, 77, 119);
 }
 
 #registerButton{
@@ -74,7 +74,7 @@ body{
 #actions > div{
     border: 2px solid black;
     border-radius: 20px;
-    background-color: #E4B1F0;
+    background-color: rgb(228, 177, 240);
     position: absolute;
     height: 3em;
     width: 8em;

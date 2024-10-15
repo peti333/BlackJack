@@ -205,6 +205,46 @@ class DatabaseHandler{
       })
     }
 
+    getUserBalances(){
+      return new Promise((resolve,reject) => {
+        return this.database.query('SELECT username, balance FROM UserInformation;', (err, results) => {
+            if (err) {
+              console.error(err)
+              reject(err)
+            } 
+            else{
+              if(results.length != 0){
+                console.log(results)
+                resolve(results)
+              }
+              else{
+                resolve(0)
+              }
+            }
+          })
+      })
+    }
+
+    getWinRate(){
+      return new Promise((resolve,reject) => {
+        return this.database.query('SELECT sum(wins) as wins, sum(ties) as ties, sum(losses) as losses FROM UserInformation;', (err, results) => {
+            if (err) {
+              console.error(err)
+              reject(err)
+            } 
+            else{
+              if(results.length != 0){
+                console.log(results)
+                resolve(results)
+              }
+              else{
+                resolve(0)
+              }
+            }
+          })
+      })
+    }
+
     endConnection(){
         database.end()
     }
