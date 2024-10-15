@@ -17,18 +17,17 @@ const currentPlayerTable = document.getElementById('currentPlayerTable')
 //TODO: NPM INSTALL chart.js
 /*
 Charts:
- - Player balances
  - Playing user count
 */
 
-socket.emit('getAllUsernames','admin')
 
+//INFORMATION
+socket.emit('getAllUsernames','admin')
 socket.emit('getCurrentUsers','admin')
 
+//CHARTS
 socket.emit('getUserSignupDates' , 'admin')
-
 socket.emit('getUserBalanceCharts', 'admin')
-
 socket.emit('getWinRate','admin')
 
 socket.on('currentPlayerTableACK', data => {
