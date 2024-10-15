@@ -11,134 +11,7 @@ const options = {
 }
 
 
-/*
 
-const database = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'admin',
-  database: 'testDatabase'
-})
-
-database.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.stack);
-  }
-})
-  */
-
-/*
-database.execute('INSERT INTO testing (id,username,balance) VALUES (2,"testUsernameInsert",98);', (err,results) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log(results);
-  }
-});
-*/
-/*
-const argon2 = require('argon2')
-const options = {
-  type: argon2.argon2id,
-  timeCost: 3,
-  memoryCost: 20000,
-  parallelism: 4,
-  hash_len: 99, //MIGHT CHANGE LATER
-}
-
-
-
-console.log('start hash')
-const hash = argon2.hash("password")
-.then(hashedPassword => {
-  console.log('Hashed Password:', hashedPassword)
-  database.execute('INSERT INTO testing (id,username,balance) VALUES (3,"'+ hashedPassword + '",98);', (err,results) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log(results);
-    }
-  });
-})
-
-*/
-
-
-
-/*
-let test = "testUsername"
-
-database.query('SELECT * FROM testing WHERE username LIKE "' + test + '" ;', (err, results) => {
-  if (err) {
-    console.error(err)
-  } else {
-    console.log(results)
-    if(results.length != 0){
-      console.log("username: " + results[0]['username'])
-      console.log("balance: "  + results[0]['balance'])
-    }
-    else{
-      console.log("query return null")
-    }
-  }
-})
-*/
-/*
-database.query('SELECT * FROM testing WHERE username LIKE "testUsername";', (err, results) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log(results);
-    if(results.length != 0){
-      console.log("username: " + results[0]['username'])
-      console.log("balance: "  + results[0]['balance'])
-    }
-    else{
-      console.log("query return null")
-    }
-  }
-});
-*/
-
-//database.end();
-
-
-/*
-const database = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'admin',
-  database: 'testDatabase'
-});
-
-database.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.stack);
-  }
-})
-
-*/
-
-/*
-database.execute('INSERT INTO testing (id,username,balance) VALUES (2,"testUsernameInsert",98);', (err,results) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log(results);
-  }
-});
-*/
-/*
-database.query('SELECT * FROM userData', (err, results) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log(results);
-  }
-});
-
-database.end();
-*/
 //TODO: check if changing * is optimal in queries
 //TODO: may need to switch to async functions and promises due to how mysql works
 
@@ -260,6 +133,7 @@ class DatabaseHandler{
 
     //Add wins,losses,ties and refresh the balance
     updateUserGameInfo(data){
+      console.log("updating user info: " + data)
         let temp
         for(let i = 0; i < data.length; i++){
             temp = data[i][1] == 1 ? 'wins' : (data[i][1] == 0) ? 'ties' : 'losses' 

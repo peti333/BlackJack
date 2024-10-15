@@ -90,6 +90,7 @@ class Player{
                 break
         }
         this._bet = 0
+        console.log("setLose(" + to + "): " + this._balance)
     }
     getLose(){
         return this._lose

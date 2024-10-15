@@ -101,7 +101,7 @@ io.on('connection', (socket) => {
   socket.on('clientLogin',async data => {
     console.log('Login attempt: ' + data)
     let exists = await handler.checkIfUserExists(data[0])
-    if(!exists){
+    if(exists){
       if(handler.checkPassword(data[0],data[1])){
         if(data[0] == 'admin'){
           //socket.emit('loginACK',2)

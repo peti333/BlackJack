@@ -140,7 +140,6 @@ class GameOperator{
             else{
                 playerSum = playerSum[0]
             }
-            this.playerTie(activePlayers[i].getUsername())
             if((playerSum > dealerSum || dealerSum > 21) && playerSum <= 21){
                 this.playerWin(activePlayers[i].getUsername())
             }
