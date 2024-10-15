@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script defer src="adminScript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer type="module" src="adminScript.js"></script>
     <title>ADMIN</title>
 </head>
 <body>
     <h1>Admin Dashboard</h1>
     <h2>Current Users:</h2>
+    <table id="currentPlayerTable">
+        <tr><th>ID</th><th>Username</th><th>Balance</th><th>Wins</th><th>Ties</th><th>Losses</th><th>Winrate</th></tr>
+    </table>
     <h2>Current Game:</h2>
     
     <label for="optionsLabel"><h2>Browse Players:</h2></label>
@@ -26,5 +30,7 @@
         <label>Password: </label><input id="passwordInput" type="text">
         <input id="RegisterButton" type="button" value="Register">
     </form>
+    <h2>Charts: </h2>
+    <div style="height:30em;width:60em;"><canvas id="UserSignUpMonthChart" width="400" height="200"></canvas></div>
 </body>
 </html>

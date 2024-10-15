@@ -107,7 +107,10 @@ io.on('connection', (socket) => {
           //socket.emit('loginACK',2)
           socket.emit('redirectToAdmin', '/admin')
         }
-        socket.emit('loginACK',1)
+        else{
+          socket.emit('loginACK',1)
+          socket.emit('currentPlayerTableACK', /* ??? */)
+        }
       }
       else{
         socket.emit('loginACK',0)
@@ -236,6 +239,7 @@ io.on('connection', (socket) => {
   
   socket.on('playerDisconnect', data => {
     operator.removePlayer(data)
+    socket.emit('currentPlayerTableACK', /* ??? */)
     console.log(data + " has disconnected")
   })
 
@@ -253,6 +257,11 @@ io.on('connection', (socket) => {
   socket.on('deleteUser', async data => {
     let result = await handler.deleteUser(data)
     socket.emit('deleteUserACK',result)
+  })
+
+  socket.on('getUserSignupDates', async data => {
+    let result = await handler.getUserSignUpMonths()
+    socket.emit('getUserSignupDatesACK',result)
   })
 
 });

@@ -156,7 +156,6 @@ class DatabaseHandler{
             } 
             else{
               if(results.length != 0){
-                console.log(results)
                 resolve(results)
               }
               else{
@@ -178,6 +177,25 @@ class DatabaseHandler{
               if(results.length != 0){
                 console.log(results)
                 resolve(username)
+              }
+              else{
+                resolve(0)
+              }
+            }
+          })
+      })
+    }
+
+    getUserSignUpMonths(){
+      return new Promise((resolve,reject) => {
+        return this.database.query("SELECT DATE_FORMAT(joined, '%Y-%m') AS join_month, COUNT(*) AS user_count FROM UserInformation GROUP BY join_month ORDER BY join_month;", (err, results) => {
+            if (err) {
+              console.error(err)
+              reject(err)
+            } 
+            else{
+              if(results.length != 0){
+                resolve(results)
               }
               else{
                 resolve(0)
