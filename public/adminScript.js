@@ -1,5 +1,3 @@
-//import Chart from 'chart.js/auto';
-
 const socket = io('http://localhost:3000')
 const optionsSelect = document.getElementById('optionsSelect')
 const playerInfoButton = document.getElementById('playerInfoButton')
@@ -8,17 +6,6 @@ const RegisterButton = document.getElementById('RegisterButton')
 const usernameInput = document.getElementById('usernameInput')
 const passwordInput = document.getElementById('passwordInput')
 const currentPlayerTable = document.getElementById('currentPlayerTable')
-
-
-
-
-//SOCKET EVENTS
-
-//TODO: NPM INSTALL chart.js
-/*
-Charts:
- - Playing user count
-*/
 
 
 //INFORMATION
@@ -30,6 +17,8 @@ socket.emit('getUserSignupDates' , 'admin')
 socket.emit('getUserBalanceCharts', 'admin')
 socket.emit('getWinRate','admin')
 
+
+//TODO:
 socket.on('currentPlayerTableACK', data => {
     currentPlayerTable.innerHTML = ""
     data.forEach(element => {
@@ -84,7 +73,7 @@ socket.on('getUserBalanceChartsACK', data => {
         data: {
             labels:usernames,
             datasets: [{
-                label: 'Players',
+                label: 'Balances',
                 data: balances,
                 backgroundColor: 'rgba(190, 120, 183, 1)',
                 borderColor: 'rgba(0, 0, 0, 1)',
@@ -147,6 +136,46 @@ socket.on('getWinRateACK', data => {
     })
 })
 
+socket.on('getUserActivityACK', data => {
+    document.getElementById('UserActivityChart').innerHTML = ""
+    document.getElementById('UserActivityChart').hidden = false
+    let chart = document.getElementById('UserActivityChart').getContext('2d')
+    const hours = data.map(item => item.activityByHour)
+    const counts = data.map(item => item.activityCount)
+
+    const UserActivityChart = new Chart(chart, {
+        type:'line',
+        data: {
+            labels:hours,
+            datasets: [{
+                label: 'Activity',
+                data: counts,
+                backgroundColor: 'rgba(190, 120, 183, 1)',
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth:1,
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.5)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.5)'
+                    }
+                }
+            }
+        }
+    })
+})
+
 socket.on('getAllUsernamesACK', data => {
     optionsSelect.innerHTML = ""
     for(let i = 0; i < data.length; i++){
@@ -182,6 +211,7 @@ socket.on('registerACK', data => {
 
 playerInfoButton.addEventListener('click', e => {
     socket.emit('getUserInformation', optionsSelect.value)
+    socket.emit('getUserActivity', optionsSelect.value)
 })
 
 RegisterButton.addEventListener('click', e=> {

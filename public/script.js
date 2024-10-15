@@ -51,7 +51,7 @@ let playerIndex = 1
 //
 socket.on('giveCards',data =>{
     console.log(data)
-    let getCards = data['_cards']
+    let getCards = data['_cards'][0]
     let getUsername = data['_username']
     if(getUsername === username.value){
         playerHand = document.getElementById('playerHand')
@@ -73,12 +73,19 @@ socket.on('giveCard',data =>{
     let getCards = data['_cards']
     let getUsername = data['_username']
 
+    console.log(data)
+
     if(getUsername === username.value){
-        playerHand = document.getElementById('playerHand')
-        playerHand.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
+        if(data['_splitIndex'] == 0){
+            playerHand = document.getElementById('playerHand')
+            playerHand.innerHTML += '<div class="card">' + getCards[0][getCards[0].length - 1]['suit'] + ':' + getCards[0][getCards[0].length - 1]['value'] + '</div>'
+        }
+        else{
+            playerHandSplit = document.getElementById('playerHandSplit')
+            playerHandSplit.innerHTML += '<div class="card">' + getCards[1][getCards[1].length - 1]['suit'] + ':' + getCards[1][getCards[1].length - 1]['value'] + '</div>'
+        }
     }
     else{
-        //TODO: class:playerX for multiple players
         let toPlayer = document.getElementById('profile-'+getUsername)
         let toHand = document.getElementById( 'hand-'+ getUsername)
         toHand.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
@@ -132,7 +139,7 @@ socket.on('giveDealer',data => {
 socket.on('giveDealerMore',data => {
     
     dealerHand = document.getElementById('dealerHand')
-    let getCards = data['_cards']
+    let getCards = data['_cards'][0]
 
     for(let i = 2; i < getCards.length; i++){
         dealerHand.innerHTML += '<div class="card">' + getCards[i]['suit'] + ':' + getCards[i]['value'] + '</div>'
@@ -176,9 +183,21 @@ socket.on('playerLose', data => {
 })
 
 socket.on('betACK', data => {
+    console.log(data)
     if(data != 0){   
     betValue += betAddValue
-    betCircle.innerHTML = "<p>" + betValue + "$ </p>"
+    betCircle.innerHTML = "<p>" + betValue + "$</p>"
+    }
+})
+
+socket.on('doubleACK', data => {
+    betValue *= 2
+    betCircle.innerHTML = "<p>" + betValue + "$</p>"
+})
+
+socket.on('canSplit', data => {
+    if(data == username.value){
+        splitButton.hidden = false
     }
 })
 
@@ -186,11 +205,37 @@ socket.on('balanceUPDT', data => {
     balance.innerHTML = data + '$' 
 })
 
+socket.on('split', data => {
+    document.getElementById('playerHandSplit').hidden = false
+    splitButton.hidden = true
+    doubleDownButton.hidden = true
+
+    console.log(data)
+
+    let firstCards = data['_cards'][0]
+    let secondCards = data['_cards'][1]
+    let getUsername = data['_username']
+    
+    if(getUsername === username.value){
+        playerHand = document.getElementById('playerHand')
+        playerHand.innerHTML = '<div class="card">' + firstCards[0]['suit'] + ':' + firstCards[0]['value'] + '</div>'
+
+        playerHandSplit = document.getElementById('playerHandSplit')
+        playerHandSplit.innerHTML = '<div class="card">' + secondCards[0]['suit'] + ':' + secondCards[0]['value'] + '</div>'
+    }
+    else{
+        let toPlayer = document.getElementById('profile-'+getUsername)
+        let toHand = document.getElementById( 'hand-'+ getUsername)
+        toHand.innerHTML += '<div class="card">' + getCards[getCards.length - 1]['suit'] + ':' + getCards[getCards.length - 1]['value'] + '</div>'
+    }
+})
+
 socket.on('requestNewGame',data => {
     playerIndex = 1
     console.log("GAMEOVER")
     playerHand = document.getElementById('playerHand')
     playerHand.innerHTML = ""
+    playerHandSplit.innerHTML = ""
     dealerHand.innerHTML = ""
     while(table.children.length > 2){
         table.children[table.children.length - 1].remove()
@@ -218,9 +263,10 @@ socket.on('requestNewGame',data => {
 })
 
 socket.on('gameOver', data => {
+    console.log(data)
     for(let i = 0; i < data.length; i++){
         if(data[i][0] == username.value){
-            switch(data[i][1]){
+            switch(data[i][1][0]){
                 case -1:
                     popUp.innerText = "You lose"
                     break
@@ -229,6 +275,17 @@ socket.on('gameOver', data => {
                     break
                 case 1:
                     popUp.innerText = "You win"
+                    break
+            }
+            switch(data[i][1][1]){
+                case -1:
+                    popUp.innerText += " the first hand, and you lose the second"
+                    break
+                case 0:
+                    popUp.innerText += " the first hand, and you tie the second"
+                    break
+                case 1:
+                    popUp.innerText += " the first hand, and you win the second"
                     break
             }
             popUp.hidden = false
@@ -275,8 +332,14 @@ socket.on('loginACK', data => {
 })
 
 
-socket.on('redirectToAdmin', (url) => {
-    window.location.href = url
+socket.on('redirectToAdmin', data => {
+    window.location.href = data
+})
+
+socket.on('canDouble', data => {
+    if(data == username.value){
+        doubleDownButton.hidden = false
+    }
 })
 
 //  -------

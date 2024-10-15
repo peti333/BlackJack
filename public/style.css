@@ -244,6 +244,18 @@ body{
     margin:0;
 }
 
+#playerHandSplit{
+    position: absolute;
+    right: 50%;
+    bottom: 14em;
+    width: 10em;
+    height: 5em;
+    display: grid; 
+    grid-auto-flow: column; 
+    padding: 0;
+    margin:0;
+}
+
 #dealerHand{
     position: absolute;
     left:42%;

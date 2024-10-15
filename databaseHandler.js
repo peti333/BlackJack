@@ -133,17 +133,41 @@ class DatabaseHandler{
 
     //Add wins,losses,ties and refresh the balance
     updateUserGameInfo(data){
-      console.log("updating user info: " + data)
+      console.log("updating user info:" + data)
         let temp
         for(let i = 0; i < data.length; i++){
-            temp = data[i][1] == 1 ? 'wins' : (data[i][1] == 0) ? 'ties' : 'losses' 
-            this.database.execute('UPDATE UserInformation SET ' + temp + ' = ' + temp + ' + 1, balance = ' + data[i][2] + ' WHERE username LIKE "' + data[i][0] + '";', (err,results) => {
+            if(data[i][1].length == 2){
+              temp = data[i][1][0] == 1 ? 'wins' : (data[i][1][0] == 0) ? 'ties' : 'losses' 
+              this.addActivity(data[i][0],temp)
+              this.database.execute('UPDATE UserInformation SET ' + temp + ' = ' + temp + ' + 1, balance = ' + data[i][2] + ' WHERE username LIKE "' + data[i][0] + '";', (err,results) => {
                 if (err) {
                   console.error(err)
                 } else {
                   console.log(results)
                 }
               })
+
+              temp = data[i][1][1] == 1 ? 'wins' : (data[i][1][1] == 0) ? 'ties' : 'losses' 
+              this.addActivity(data[i][0],temp)
+              this.database.execute('UPDATE UserInformation SET ' + temp + ' = ' + temp + ' + 1, balance = ' + data[i][2] + ' WHERE username LIKE "' + data[i][0] + '";', (err,results) => {
+                if (err) {
+                  console.error(err)
+                } else {
+                  console.log(results)
+                }
+              })
+            }
+            else{
+              temp = data[i][1] == 1 ? 'wins' : (data[i][1] == 0) ? 'ties' : 'losses' 
+              this.addActivity(data[i][0],temp)
+              this.database.execute('UPDATE UserInformation SET ' + temp + ' = ' + temp + ' + 1, balance = ' + data[i][2] + ' WHERE username LIKE "' + data[i][0] + '";', (err,results) => {
+                if (err) {
+                  console.error(err)
+                } else {
+                  console.log(results)
+                }
+              })
+            }
         }
     }
 
@@ -244,6 +268,38 @@ class DatabaseHandler{
           })
       })
     }
+
+    addActivity(username,action){
+      this.database.execute('INSERT INTO UserActivity (username,action) VALUES ("' + username + '","' + action + '");', (err,results) => {
+        if (err) {
+          console.error(err)
+        } 
+        else {
+          console.log(results)
+        }
+      })
+    }
+
+    getUserActivity(username){
+      return new Promise((resolve,reject) => {
+        return this.database.query('SELECT username, DATE_FORMAT(timestamp, "%Y-%m-%d %H:00:00") AS activityByHour, COUNT(*) AS activityCount FROM UserActivity WHERE username = "' + username + '" GROUP BY username,activityByHour ORDER BY activityByHour;', (err, results) => {
+            if (err) {
+              console.error(err)
+              reject(err)
+            } 
+            else{
+              if(results.length != 0){
+                console.log(results)
+                resolve(results)
+              }
+              else{
+                resolve(0)
+              }
+            }
+          })
+      })
+    }
+
 
     endConnection(){
         database.end()

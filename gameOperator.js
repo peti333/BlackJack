@@ -59,12 +59,8 @@ class GameOperator{
         this._roundOver = false
     }
     playerHit(username){
-        //console.log(this._players[this._currentPlayer['_lose']])
-        if(this._players[this._currentPlayer].getUsername() == username && this._players[this._currentPlayer]['_over'] == false){
+        if(this._players[this._currentPlayer].getUsername() == username && this._players[this._currentPlayer].getOver() == false){
             let drawnCard = this._cards.drawCard()
-            //Debug:
-            //console.log("drawn card: " + drawnCard.getSuit() + ":" + drawnCard.getValue())
-
             this.getPlayer(username).addCard(drawnCard.getSuit(),drawnCard.getValue())
             if(this.getPlayer(username).getSum()[0] > 21){
                 this.playerLose(username)
@@ -79,10 +75,21 @@ class GameOperator{
     }
     playerStand(username){
         if(this._players[this._currentPlayer].getUsername() == username){
-            if(++this._currentPlayer == this._players.length){
+            if(this._players[this._currentPlayer].getHasSplit() && this._players[this._currentPlayer].getSplitIndex() < 1){
+                this._players[this._currentPlayer].increaseSplitIndex()
+            }
+            else if(++this._currentPlayer == this._players.length){
                 this.roundOver()
             }
         }  
+    }
+    playerDouble(username){
+        this._players[this._currentPlayer].doubleBet()
+        this.playerHit(username)
+        this.playerStand(username)
+    }
+    playerSplit(username){
+        this._players[this._currentPlayer].splitHands()
     }
     roundOver(){
         let activePlayers = this._players
@@ -133,23 +140,50 @@ class GameOperator{
         let playerSum = 0
         let dealerSum = this._dealer.getSum()[0]
         for(let i = 0; i < activePlayers.length; i++){
-            playerSum = activePlayers[i].getSum()
-            if(playerSum.length == 2 && playerSum[1] <= 21){
-                playerSum = playerSum[1]
+            if(activePlayers[i].getSplitIndex() >= 1){
+                activePlayers[i].setSplitIndex(0)
+                for(let j = 0; j <= 1; j++){
+                    activePlayers[i].setSplitIndex(j)
+                    playerSum = activePlayers[i].getSum()
+                    if(playerSum.length == 2 && playerSum[1] <= 21){
+                        playerSum = playerSum[1]
+                    }
+                    else{
+                        playerSum = playerSum[0]
+                    }
+                    if((playerSum > dealerSum || dealerSum > 21) && playerSum <= 21){
+                        this.playerWin(activePlayers[i].getUsername())
+                    }
+                    else if(playerSum == dealerSum){
+                        this.playerTie(activePlayers[i].getUsername())
+                    }
+                    else{
+                        this.playerLose(activePlayers[i].getUsername())
+                    }
+                    activePlayers[i].setOver(true)
+                    activePlayers[i].increaseSplitIndex()
+                }
             }
             else{
-                playerSum = playerSum[0]
+                playerSum = activePlayers[i].getSum()
+                    if(playerSum.length == 2 && playerSum[1] <= 21){
+                        playerSum = playerSum[1]
+                    }
+                    else{
+                        playerSum = playerSum[0]
+                    }
+                    if((playerSum > dealerSum || dealerSum > 21) && playerSum <= 21){
+                        this.playerWin(activePlayers[i].getUsername())
+                    }
+                    else if(playerSum == dealerSum){
+                        this.playerTie(activePlayers[i].getUsername())
+                    }
+                    else{
+                        this.playerLose(activePlayers[i].getUsername())
+                    }
+                    activePlayers[i].setOver(true)
+                    activePlayers[i].increaseSplitIndex()
             }
-            if((playerSum > dealerSum || dealerSum > 21) && playerSum <= 21){
-                this.playerWin(activePlayers[i].getUsername())
-            }
-            else if(playerSum == dealerSum){
-                this.playerTie(activePlayers[i].getUsername())
-            }
-            else{
-                this.playerLose(activePlayers[i].getUsername())
-            }
-            activePlayers[i].setOver(true)
         }
     }
     getPlayerCount(){

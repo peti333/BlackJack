@@ -102,9 +102,8 @@ io.on('connection', (socket) => {
     console.log('Login attempt: ' + data)
     let exists = await handler.checkIfUserExists(data[0])
     if(exists){
-      if(handler.checkPassword(data[0],data[1])){
+      if(handler.checkPassword(data[0],data[1]) && data[1] != ""){
         if(data[0] == 'admin'){
-          //socket.emit('loginACK',2)
           socket.emit('redirectToAdmin', '/admin')
         }
         else{
@@ -128,9 +127,15 @@ io.on('connection', (socket) => {
     let cards = operator.getPlayer(data)
     console.log(cards)
     io.emit('giveCards',cards)
-    io.emit('giveDealer',operator.getDealer()._cards)
+    io.emit('giveDealer',operator.getDealer()._cards[0])
     let currentPlayer = operator.getCurrentPlayerUsername()
     io.emit('playerTurn',currentPlayer)
+    if(operator.getPlayer(currentPlayer).getBalance() >= operator.getPlayer(currentPlayer).getBet()){
+      io.emit('canDouble', currentPlayer)
+    }
+    if(operator.getPlayer(currentPlayer)['_canSplit']){
+      io.emit('canSplit', currentPlayer)
+    }
   })
 
   socket.on('action', data =>{
@@ -140,8 +145,33 @@ io.on('connection', (socket) => {
     let action = datas[1]
     let currentPlayer = ""
     switch(action){
+      case "split":
+        operator.playerSplit(username)
+        let playerCards = operator.getPlayer(username)
+        socket.emit('split',playerCards)
+        break
+      case "double":
+        socket.emit('doubleACK', 1)
+        operator.playerDouble(username)
+        let cards = operator.getPlayer(username)
+        socket.emit('balanceUPDT',operator.getPlayer(username).getBalance())
+        io.emit('giveCard',cards)
+        if(operator['_roundOver']){
+          console.log("ROUNDOVER")
+          io.emit('giveDealerMore',operator.getDealer())
+          let gameOverState = operator.getGameOverPlayers()
+          operator.gameOver()
+          handler.updateUserGameInfo(gameOverState)
+        gameStarted = false
+        timerStarted = false
+        io.emit('gameOver',gameOverState)
+        break
+        }
+        currentPlayer = operator.getCurrentPlayerUsername()
+        io.emit('playerTurn',currentPlayer)
       case "hit":
         let canHit = operator.playerHit(username)
+        console.log("canHit: " + canHit)
         if(canHit[0]){
           let cards = operator.getPlayer(username)
           io.emit('giveCard',cards)
@@ -156,7 +186,6 @@ io.on('connection', (socket) => {
         else{
           break
         }
-        
       case "stand":
         console.log("stand")
         operator.playerStand(username)
@@ -173,11 +202,6 @@ io.on('connection', (socket) => {
         }
         currentPlayer = operator.getCurrentPlayerUsername()
         io.emit('playerTurn',currentPlayer)
-        break
-      //TODO: IMPLEMENT THESE
-      case "split":
-        break
-      case "double":
         break
     }
   })
@@ -272,6 +296,11 @@ io.on('connection', (socket) => {
   socket.on('getWinRate', async data => {
     let result = await handler.getWinRate()
     socket.emit('getWinRateACK',result)
+  })
+
+  socket.on('getUserActivity', async data => {
+    let result = await handler.getUserActivity(data)
+    socket.emit('getUserActivityACK',result)
   })
 
 });
