@@ -9,13 +9,18 @@ const Player = require("./player.js")
 
 class GameOperator{
 
+    _id = 0
     _players = []
     _dealer = new Player("dealer")
     _currentPlayer = 0
     _cards = new Deck()
     _roundOver = true
     _lostPlayers = []
-    constructor(){
+    _gameStarted = false
+    _timer = 0
+
+    constructor(id){
+        this._id = id
     }
     addPlayer(username){
         let newPlayer = new Player(username)
@@ -113,6 +118,7 @@ class GameOperator{
                 return this._players[i]
             }
         }
+        return ''
     }
     getCurrentPlayerUsername(){
         if(this._currentPlayer == this._players.length){
@@ -213,6 +219,10 @@ class GameOperator{
             this._players[i].clearHand()
         }
         this._dealer.clearHand()
+    }
+
+    getId(){
+        return this._id
     }
 }
 

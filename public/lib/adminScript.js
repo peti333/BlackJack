@@ -2,6 +2,7 @@ const socket = io('http://localhost:3000')
 const optionsSelect = document.getElementById('optionsSelect')
 const playerInfoButton = document.getElementById('playerInfoButton')
 const playerInfoTable = document.getElementById('playerInfoTable')
+const playerInfoTableBody = document.getElementById('playerInfoTableBody')
 const RegisterButton = document.getElementById('RegisterButton')
 const usernameInput = document.getElementById('usernameInput')
 const passwordInput = document.getElementById('passwordInput')
@@ -136,23 +137,43 @@ socket.on('getWinRateACK', data => {
     })
 })
 
-socket.on('getUserActivityACK', data => {
-    document.getElementById('UserActivityChart').innerHTML = ""
-    document.getElementById('UserActivityChart').hidden = false
-    let chart = document.getElementById('UserActivityChart').getContext('2d')
-    const hours = data.map(item => item.activityByHour)
-    const counts = data.map(item => item.activityCount)
+let UserActivityChart = null; // Store the chart instance
 
-    const UserActivityChart = new Chart(chart, {
-        type:'line',
+socket.on('getUserActivityACK', data => {
+    const chartElement = document.getElementById('UserActivityChart');
+
+
+    if (UserActivityChart) {
+        UserActivityChart.destroy();
+        UserActivityChart = null;
+    }
+
+    if (!data || data.length === 0) {
+        chartElement.hidden = true;
+        document.getElementById('UserActivityDiv').hidden = true
+        return;
+    }
+
+    document.getElementById('UserActivityDiv').hidden = false
+
+    chartElement.innerHTML = "";
+    chartElement.hidden = false;
+    
+
+    let chart = chartElement.getContext('2d');
+    const hours = data.map(item => item.activityByHour);
+    const counts = data.map(item => item.activityCount);
+
+    UserActivityChart = new Chart(chart, {
+        type: 'line',
         data: {
-            labels:hours,
+            labels: hours,
             datasets: [{
                 label: 'Activity',
                 data: counts,
                 backgroundColor: 'rgba(190, 120, 183, 1)',
                 borderColor: 'rgba(255, 255, 255, 1)',
-                borderWidth:1,
+                borderWidth: 1,
                 fill: false,
                 tension: 0.1
             }]
@@ -173,8 +194,11 @@ socket.on('getUserActivityACK', data => {
                 }
             }
         }
-    })
-})
+    });
+});
+
+
+
 
 socket.on('getAllUsernamesACK', data => {
     optionsSelect.innerHTML = ""
@@ -185,13 +209,15 @@ socket.on('getAllUsernamesACK', data => {
 
 socket.on('getUserInformationACK',data => {
     playerInfoTable.hidden = false
-    playerInfoTable.innerHTML += '<tbody id="' + data[0]['username'] + '"><tr><td>' + data[0]['id'] +'</td><td>' + data[0]['username'] + '</td><td>' + data[0]['balance'] + '</td><td>' + data[0]['wins'] + '</td><td>' + data[0]['ties'] + '</td><td>' + data[0]['losses'] + '</td><td>' + data[0]['joined'] + '</td><td><input id="buttonHide' + data[0]['id'] + '"type="button" value="X"></td><td><input id="buttonDelete' + data[0]['id'] + '"type="button" value="Delete"></td></tr></tbody>'
-    document.getElementById('buttonHide' + data[0]['id']).addEventListener('click', e => {
-        console.log("asddd")
-        document.getElementById(data[0]['username']).hidden = true
+    playerInfoTableBody.innerHTML = ""
+    playerInfoTableBody.innerHTML += '<tr><td>' + data[0]['id'] +'</td><td>' + data[0]['username'] + '</td><td>' + data[0]['balance'] + '</td><td>' + data[0]['wins'] + '</td><td>' + data[0]['ties'] + '</td><td>' + data[0]['losses'] + '</td><td>' + data[0]['joined'] + '</td><td><input id="buttonHide" type="button" value="X"></td><td><input id="buttonDelete" type="button" value="Delete"></td></tr>'
+    document.getElementById('buttonHide').addEventListener('click', e => {
+        playerInfoTableBody.innerHTML = ""
+        playerInfoTable.hidden = false
     })
-    document.getElementById('buttonDelete' + data[0]['id']).addEventListener('click', e => {
-        document.getElementById(data[0]['username']).hidden = true
+    document.getElementById('buttonDelete').addEventListener('click', e => {
+        playerInfoTableBody.innerHTML = ""
+        playerInfoTable.hidden = false
         socket.emit('deleteUser',data[0]['username'])
     })
 })

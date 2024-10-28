@@ -1,19 +1,25 @@
 /*
-  - buttons appearing in situations: double, split
-  - dataBase
-  - leaderboard
-  - signing in
-  - profile stats
-  - rules
-  - assets
-    - cards
-    - table
-    - profile pictures
-  - admin page
+TODO:
+  -lelassítás
+  -admin befejez
+  - több játék
+  - bug fixing
+  - FONTOS: Double down nem látszódik kártya
+NICE TO HAVE:
+  - animáció
+  - képek / kártyák
+  - privát szóbák
+  - kiírni hogy jó/rossz a login/register
+(REFACTOR):
+  -mysql lehet alapból promise-t ad: https://sidorares.github.io/node-mysql2/docs#first-query
 */
 // GAME
+const GamesOrganizer = require('./gamesOrganizer.js')
 const gameOperator = require("./gameOperator.js")
-const operator = new gameOperator()
+
+const organizer = new GamesOrganizer()
+//organizer.createNewGame()
+//const operator = new gameOperator(1)
 
 // CONNECTION
 const express = require('express')
@@ -35,15 +41,8 @@ const handler = new databaseHandler()
 let timerStarted = false
 let gameStarted = false
 let timer = 10
+let timers = []
 
-
-app.get('/admin', (req, res) => {
-  //if (req.session.username === 'admin') {
-    res.sendFile(__dirname + '/public/admin.html'); // Serve admin page
-  //} else {
-   //res.status(403).send('Forbidden'); // Return forbidden status if not admin
-  //}
-});
 
 
 //SOCKET EVENTS
@@ -54,12 +53,95 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('getData',data)
   })
 
+  socket.on('createRoom', async (data) => {
+    let roomId = organizer.createNewGame(data)
+    socket.join(roomId)
+    console.log(`Room ${roomId} created.`)
+    socket.emit('roomCreated', roomId)
+  })
+  
+  socket.on('tryCreateRoom', async data => {
+    if(!organizer.roomExists(data)){
+      socket.emit('tryCreateRoomACK',[1,data])
+    }
+    else{
+      socket.emit('tryCreateRoomACK',[0,data])
+    }
+  })
+
+  socket.on('getActiveRooms', async data => {
+    socket.emit('getActiveRoomsACK',organizer.getActiveRooms())
+  })
+
+  socket.on('joinRoom', async (data) => {
+    let username = data[0];
+    let roomId = data[1]
+    console.log(username + ' joined room ' + roomId)
+    if (organizer.roomExists(roomId)) {
+      let balance = await handler.getUserBalance(username);
+      organizer.addPlayerToRoom(roomId, username, balance);
+      socket.join(roomId);
+      socket.emit('joinedRoom', roomId);
+      io.to(roomId).emit('playerJoined', { username, balance });
+    } else {
+      socket.emit('error', 'Room not found');
+    }
+  })
+
+  socket.on('startGame', (data) => {
+    const { roomId } = data;
+    if (organizer.roomExists(roomId)) {
+      if (!gameTimers[roomId]) {
+        let timer = 10;
+        gameTimers[roomId] = setInterval(() => {
+          if (timer > 0) {
+            io.to(roomId).emit('timer', timer);
+            timer--;
+          } else {
+            clearInterval(gameTimers[roomId]);
+            organizer.startGameInRoom(roomId);
+            io.to(roomId).emit('gameStarted');
+          }
+        }, 1000);
+      }
+    } else {
+      socket.emit('error', 'Room not found');
+    }
+  })
+
+  socket.on('action', (data) => {
+    const { username, action, roomId } = data;
+    if (organizer.roomExists(roomId)) {
+      let result = organizer.handlePlayerAction(roomId, username, action);
+      io.to(roomId).emit('actionResult', result);
+      
+      if (result.roundOver) {
+        io.to(roomId).emit('roundOver', result.gameState);
+        handler.updateUserGameInfo(result.gameState);
+        clearInterval(gameTimers[roomId]);
+      } else {
+        io.to(roomId).emit('playerTurn', result.currentPlayer);
+      }
+    }
+  })
+
+  socket.on('addBet', (data) => {
+    const { username, value, roomId } = data;
+    if (organizer.roomExists(roomId)) {
+      let result = organizer.addBet(roomId, username, value);
+      io.to(roomId).emit('betUpdate', { username, balance: result.balance });
+    } else {
+      socket.emit('error', 'Room not found');
+    }
+  })
+  
   //STARTING SCREEN
   socket.on('loginSubmit', async data =>{
     console.log("user logged in: " + data)
     if(!gameStarted){
       let balance = await handler.getUserBalance(data)
-      operator.addExistingPlayer(data,balance)
+      organizer.addPlayer(data,balance)
+      //operator.addExistingPlayer(data,balance)
       socket.emit('balanceUPDT',balance)
       if(!timerStarted){
         timer = 10
@@ -72,8 +154,10 @@ io.on('connection', (socket) => {
         if(--timer < 0){
           if(!gameStarted){
             io.emit('bettingOver',0)
-            operator.startGame()
-            let playerCount = operator.getPlayerCount()
+            organizer.findUsernameInGame(data).startGame()
+            //operator.startGame()
+            let playerCount = organizer.findUsernameInGame(data).getPlayerCount()
+            //let playerCount = operator.getPlayerCount()
             io.emit('playerCount',playerCount)
             clearInterval(firstCountDown)
           }
@@ -104,7 +188,7 @@ io.on('connection', (socket) => {
     if(exists){
       if(handler.checkPassword(data[0],data[1]) && data[1] != ""){
         if(data[0] == 'admin'){
-          socket.emit('redirectToAdmin', '/admin')
+          socket.emit('redirectToAdmin', '/pages/admin.html')
         }
         else{
           socket.emit('loginACK',1)
@@ -123,57 +207,57 @@ io.on('connection', (socket) => {
 
   //GAME SCREEN
   socket.on('getCards',data =>{
-    console.log(data)
-    let cards = operator.getPlayer(data)
-    console.log(cards)
-    io.emit('giveCards',cards)
-    io.emit('giveDealer',operator.getDealer()._cards[0])
-    let currentPlayer = operator.getCurrentPlayerUsername()
-    io.emit('playerTurn',currentPlayer)
-    if(operator.getPlayer(currentPlayer).getBalance() >= operator.getPlayer(currentPlayer).getBet()){
-      io.emit('canDouble', currentPlayer)
+    let game = organizer.findUsernameInGame(data)
+    let cards = game.getPlayer(data)
+    io.emit('giveCards',[game.getId(),cards])
+    io.emit('giveDealer',[game.getId(),game.getDealer()._cards[0]])
+    let currentPlayer = game.getCurrentPlayerUsername()
+    io.emit('playerTurn',[game.getId(), currentPlayer])
+    if(game.getPlayer(currentPlayer).getBalance() >= game.getPlayer(currentPlayer).getBet()){
+      io.emit('canDouble', [game.getId(),currentPlayer])
     }
-    if(operator.getPlayer(currentPlayer)['_canSplit']){
-      io.emit('canSplit', currentPlayer)
+    if(game.getPlayer(currentPlayer)['_canSplit']){
+      io.emit('canSplit', [game.getId(),currentPlayer])
     }
   })
 
   socket.on('action', data =>{
     console.log("user action: " + data)
+    let game = organizer.findUsernameInGame(username)
     let datas = data.split(":")
     let username = datas[0]
     let action = datas[1]
     let currentPlayer = ""
     switch(action){
       case "split":
-        operator.playerSplit(username)
-        let playerCards = operator.getPlayer(username)
+        game.playerSplit(username)
+        let playerCards = game.getPlayer(username)
         socket.emit('split',playerCards)
         break
       case "double":
         socket.emit('doubleACK', 1)
-        operator.playerDouble(username)
-        let cards = operator.getPlayer(username)
-        socket.emit('balanceUPDT',operator.getPlayer(username).getBalance())
+        game.playerDouble(username)
+        let cards = game.getPlayer(username)
+        socket.emit('balanceUPDT',game.getPlayer(username).getBalance())
         io.emit('giveCard',cards)
-        if(operator['_roundOver']){
+        if(game['_roundOver']){
           console.log("ROUNDOVER")
-          io.emit('giveDealerMore',operator.getDealer())
-          let gameOverState = operator.getGameOverPlayers()
-          operator.gameOver()
+          io.emit('giveDealerMore',game.getDealer())
+          let gameOverState = game.getGameOverPlayers()
+          game.gameOver()
           handler.updateUserGameInfo(gameOverState)
         gameStarted = false
         timerStarted = false
         io.emit('gameOver',gameOverState)
         break
         }
-        currentPlayer = operator.getCurrentPlayerUsername()
+        currentPlayer = game.getCurrentPlayerUsername()
         io.emit('playerTurn',currentPlayer)
       case "hit":
-        let canHit = operator.playerHit(username)
+        let canHit = game.playerHit(username)
         console.log("canHit: " + canHit)
         if(canHit[0]){
-          let cards = operator.getPlayer(username)
+          let cards = game.getPlayer(username)
           io.emit('giveCard',cards)
           if(canHit[1]){
             socket.emit('playerLose',0)
@@ -188,19 +272,19 @@ io.on('connection', (socket) => {
         }
       case "stand":
         console.log("stand")
-        operator.playerStand(username)
-        if(operator['_roundOver']){
+        game.playerStand(username)
+        if(game['_roundOver']){
           console.log("ROUNDOVER")
-          io.emit('giveDealerMore',operator.getDealer())
-          let gameOverState = operator.getGameOverPlayers()
-          operator.gameOver()
+          io.emit('giveDealerMore',game.getDealer())
+          let gameOverState = game.getGameOverPlayers()
+          game.gameOver()
           handler.updateUserGameInfo(gameOverState)
         gameStarted = false
         timerStarted = false
         io.emit('gameOver',gameOverState)
         break
         }
-        currentPlayer = operator.getCurrentPlayerUsername()
+        currentPlayer = game.getCurrentPlayerUsername()
         io.emit('playerTurn',currentPlayer)
         break
     }
@@ -225,8 +309,8 @@ io.on('connection', (socket) => {
 
 
   socket.on('newGame',data => {
-    operator.clearPlayerHands()
-    socket.emit('balanceUPDT',operator.getPlayer(data).getBalance())
+    organizer.findUsernameInGame(data).clearPlayerHands()
+    socket.emit('balanceUPDT',organizer.findUsernameInGame(data).getPlayer(data).getBalance())
     if(!gameStarted){
       if(!timerStarted){
         timer = 10
@@ -240,8 +324,7 @@ io.on('connection', (socket) => {
           if(!gameStarted){
             console.log("NEW ROUND STARTING")
             io.emit('bettingOver',0)
-            operator.startGame()
-            let playerCount = operator.getPlayerCount()
+            let playerCount = organizer.findUsernameInGame(data).getPlayerCount()
             io.emit('playerCount',playerCount)
             gameStarted = true
             clearInterval(countdown)
@@ -253,18 +336,18 @@ io.on('connection', (socket) => {
   })
 
   socket.on('addBet', data => {
-    let datas = data.split(':')
-    let value = datas[1]
-    let username = datas[0]
-
-    socket.emit('betACK',operator.getPlayer(username).addBet(value))
-    socket.emit('balanceUPDT',operator.getPlayer(username).getBalance())
+    let value = data[1]
+    let username = data[0]
+    socket.emit('betACK',organizer.findUsernameInGame(username).getPlayer(username).addBet(value))
+    socket.emit('balanceUPDT',organizer.findUsernameInGame(username).getPlayer(username).getBalance())
   })
   
   socket.on('playerDisconnect', data => {
-    operator.removePlayer(data)
-    socket.emit('currentPlayerTableACK', /* ??? */)
-    console.log(data + " has disconnected")
+    if(organizer.findUsernameInGame(data) != undefined){
+      organizer.findUsernameInGame(data).removePlayer(data)
+      socket.emit('currentPlayerTableACK', /* ??? */)
+      console.log(data + " has disconnected")
+    }
   })
 
 
@@ -301,6 +384,20 @@ io.on('connection', (socket) => {
   socket.on('getUserActivity', async data => {
     let result = await handler.getUserActivity(data)
     socket.emit('getUserActivityACK',result)
+  })
+
+  //TODO:
+  socket.on('getCurrentUsers', async data => {
+
+  })
+
+  socket.on('getLeaderBoard', async data => {
+    let result = await handler.getLeaderBoard()
+    socket.emit('getLeaderBoardACK', result)
+  })
+
+  socket.on('getNewRoomCode', async data => {
+  
   })
 
 });

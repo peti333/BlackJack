@@ -3,34 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../styles/style.css">
     <title>BlackJack</title>
     <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script defer src="script.js"></script>
+    <script defer src="../lib/script.js"></script>
 </head>
 <body>
     <nav id="navbar" style="visibility: hidden;">
         <div id="leftNav">
-            <a id="rules" class="navElement">Rules</a>
-        </div>
-        <div id="midNav">
-            <a id="leaderBoard" class="navElement">Leaderboard</a>
+            <p id="roomCode" class="navElement"></p>
         </div>
         <div id="rightNav">
             <p id="balance" class="navElement">100$</p>
         </div>
     </nav>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="rules.html">Rules</a>
+        <a href="private.html">Private Game</a>
+        <a href="contact.html">Contact</a>
+    </div>
+
+    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+
     <div id="popUp" hidden></div>
     <div id="title">Peti's Casino</div>
     <div id="timer" hidden><p></p></div>
+    
     <form id="login">
         <label id="userLabel" class="loginLabel">Username:</label>
         <input type="text" id="usernameInput" class="textInput">
         <label id="passwordLabel" class="loginLabel">Password:</label>
-        <input type="text" id="passwordInput" class="textInput">
+        <input type="password" id="passwordInput" class="textInput">
         <input type="button" id="loginButton" value="login">
         <input type="button" id="registerButton" value="register">
     </form>
+
+    <div id="availableRooms" hidden>
+        <h3>Available Public Rooms</h3>
+        <ul id="roomsList"></ul>
+        <input type="button" id="createRoomButton" value="Create room">
+        <input type="button" id="refreshRoomsButton" value="Refresh Rooms">
+    </div>
+
+    <div id="joinRoomSection" hidden>
+        <input type="text" id="roomIdInput" placeholder="Enter Room ID">
+        <input type="button" id="joinRoomButton" value="Join Room">
+    </div>
+
+    <div id="createRoomSection" hidden>
+        <label>Room availability: </label>
+        <input type="button" id="changeRoomType" value="Public">
+        <div>
+            <label>Room code: </label>
+            <label id="roomCode"></label>
+        </div>
+        <input type="button" id="startCreatedGame" value="Start Game">
+    </div>
+
     <div id="table" hidden>
         <div id="dealer" hidden>
             <div id="dealerName"><p>Dealer</p></div>
@@ -43,17 +75,20 @@
             <div id="bet"><p></p></div>
         </div>
     </div>
+
     <div id="bets" hidden>
         <div id="betFive"><p>5$</p></div>
         <div id="betTwenty"><p>20$</p></div>
         <div id="betFifty"><p>50$</p></div>
         <div id="betHundred"><p>100$</p></div>
     </div>
+
     <div id="actions" hidden>
         <div id="hit"><p>HIT</p></div>
         <div id="stand"><p>STAND</p></div>
         <div id="doubleDown" hidden><p>DOUBLE DOWN</p></div>
         <div id="split" hidden><p>SPLIT</p></div>
     </div>
+
 </body>
 </html>

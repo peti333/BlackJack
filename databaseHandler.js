@@ -238,7 +238,25 @@ class DatabaseHandler{
             } 
             else{
               if(results.length != 0){
-                console.log(results)
+                resolve(results)
+              }
+              else{
+                resolve(0)
+              }
+            }
+          })
+      })
+    }
+
+    getLeaderBoard(){
+      return new Promise((resolve,reject) => {
+        return this.database.query('SELECT username, balance FROM UserInformation ORDER BY balance DESC;', (err, results) => {
+            if (err) {
+              console.error(err)
+              reject(err)
+            } 
+            else{
+              if(results.length != 0){
                 resolve(results)
               }
               else{

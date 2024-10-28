@@ -1,4 +1,3 @@
-//const e = require("express")
 const socket = io('http://localhost:3000')
 const loginButton = document.getElementById('loginButton')
 const registerButton = document.getElementById('registerButton')
@@ -41,6 +40,7 @@ let lastCurrentPlayer
 let otherPlayer
 let playerCount = 1
 let playerIndex = 1
+let roomCode = 0
 // -------------
 // INCOMING DATA
 // -------------
@@ -51,16 +51,18 @@ let playerIndex = 1
 //
 socket.on('giveCards',data =>{
     console.log(data)
-    let getCards = data['_cards'][0]
-    let getUsername = data['_username']
+    if(data[0] != roomCode){}
+    else{
+    let getCards = data[1]['_cards'][0]
+    let getUsername = data[1]['_username']
     if(getUsername === username.value){
         playerHand = document.getElementById('playerHand')
         playerHand.innerHTML += '<div class="card">' +  getCards[0]['suit'] + ':' + getCards[0]['value'] +  '</div>'
         playerHand.innerHTML += '<div class="card">' +  getCards[1]['suit'] + ':' + getCards[1]['value'] +  '</div>'
     }
     else{
-        //TODO: class:playerX for multiple players
         table.innerHTML += '<div id=' + getUsername + ' class="player' +playerIndex++ +'" >' + '<div id="profile-' + getUsername +'" class="profileBorder"><p>' + getUsername +'</p>'  + ' </div>  <div id="hand-'+ getUsername +'" class="hand"> <div class="card">' + getCards[0]['suit'] + ':' + getCards[0]['value'] + '</div>' + '<div class="card">' + getCards[1]['suit'] + ':' + getCards[1]['value'] + '</div>' + ' </div>'
+    }
     }
     
 })
@@ -304,7 +306,9 @@ socket.on('registerACK', data => {
     }
 })
 
+/*
 socket.on('loginACK', data => {
+    console.log("ASD")
     if(data == 1){
         console.log('Login successfull')
         profile.innerHTML = '<p>' + username.value + '</p>'
@@ -330,7 +334,104 @@ socket.on('loginACK', data => {
         console.log('Login failed')
     }
 })
+*/
 
+socket.on('loginACK', (result) => {
+    if (result === 1) {
+        console.log("Login successful");
+        loginButton.hidden = true
+        registerButton.hidden = true
+        username.hidden = true
+        password.hidden = true
+        userlabel.hidden = true
+        passwordlabel.hidden = true
+        document.getElementById('availableRooms').hidden = false;  // Show available rooms
+        document.getElementById('joinRoomSection').hidden = false;  // Show join room section
+        socket.emit('getActiveRooms');  // Request active rooms
+    } else {
+        console.error("Login failed");
+    }
+});
+
+socket.on('activeRoomsList', (rooms) => {
+    const roomsList = document.getElementById('roomsList');
+    roomsList.innerHTML = '';  // Clear previous rooms
+    rooms.forEach(room => {
+        const li = document.createElement('li');
+        li.textContent = room;  // Display room ID
+        roomsList.appendChild(li);
+    });
+});
+
+document.getElementById('refreshRoomsButton').addEventListener('click', () => {
+    socket.emit('getActiveRooms');
+});
+
+document.getElementById('joinRoomButton').addEventListener('click', () => {
+    const roomId = document.getElementById('roomIdInput').value;
+    const username = document.getElementById('usernameInput').value;  // Get username
+    socket.emit('joinRoom', [username, roomId]);
+});
+
+document.getElementById('createRoomButton').addEventListener('click', e => {
+    document.getElementById('availableRooms').hidden = true
+    document.getElementById('joinRoomSection').hidden = true
+    document.getElementById('createRoomSection').hidden = false
+    roomCode = Math.floor(1 + Math.random() * 999999)
+    socket.emit('tryCreateRoom', roomCode)
+})
+
+socket.on('getActiveRoomsACK', data => {
+    document.getElementById('roomsList').innerHTML = '';
+    for (let i = 0; i < data.length; i++) {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = data[i] + ' <input type="button" id="button' + i + '" value="Join Room">';
+        document.getElementById('roomsList').appendChild(listItem);
+
+        const button = listItem.querySelector('input[type="button"]');
+        button.addEventListener('click', function() {
+            socket.emit('joinRoom', [username.value, data[i]])
+        })
+    }
+})
+
+socket.on('joinedRoom', data => {
+    document.getElementById('createRoomSection').hidden = true
+    document.getElementById('roomCode').innerText = roomCode
+    profile.innerHTML = '<p>' + username.value + '</p>'
+    bets.hidden = false
+    title.hidden = true
+    table.hidden = false
+    navbar.style.visibility = 'visible'
+    timer.hidden = false
+    socket.emit('loginSubmit',username.value)
+})
+
+socket.on('tryCreateRoomACK', data => {
+    console.log("ASD")
+    if(data[0] == 1){
+        document.getElementById('roomCode').innerText = data[1]
+    }
+    else{
+        roomCode = Math.floor(1 + Math.random() * 999999)
+        socket.emit('tryCreateRoom', roomCode)
+    }
+})
+
+
+let changeRoomTypeButton = document.getElementById('changeRoomType')
+changeRoomTypeButton.addEventListener('click', e => {
+    changeRoomTypeButton.value = changeRoomTypeButton.value == 'Public' ? 'Private' : 'Public'
+})
+
+document.getElementById('startCreatedGame').addEventListener('click', e => {
+    socket.emit('createRoom',roomCode)
+    socket.emit('joinRoom', [username.value,roomCode])
+})
+
+socket.on('roomCreated', data => {
+    document.getElementById('roomCode').innerText = data
+})
 
 socket.on('redirectToAdmin', data => {
     window.location.href = data
@@ -404,9 +505,18 @@ betHundred.addEventListener('click', e => {
 })
 
 betCircle.addEventListener('click', e => {
-    socket.emit('addBet', username.value + ":" + betAddValue)
+    socket.emit('addBet', [username.value,betAddValue])
 })
 
 window.addEventListener('beforeunload', e => {
     socket.emit('playerDisconnect',username.value)
 })
+
+
+function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+  }
+  
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+}

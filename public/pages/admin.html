@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../styles/style.css">
     <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script defer type="module" src="adminScript.js"></script>
+    <script defer type="module" src="../lib/adminScript.js"></script>
     <title>ADMIN</title>
 </head>
 <body>
@@ -15,15 +15,16 @@
     <table id="currentPlayerTable">
         <tr><th>ID</th><th>Username</th><th>Balance</th><th>Wins</th><th>Ties</th><th>Losses</th><th>Winrate</th></tr>
     </table>
-    <h2>Current Game:</h2>
+    <h2>Current Games:</h2>
     
     <label for="optionsLabel"><h2>Browse Players:</h2></label>
     <select id="optionsSelect" name="options">
     </select>
     <input id="playerInfoButton" type="button" value="Get player information"> 
-    <div style="height:30em;width:60em;"><canvas id="UserActivityChart" width="400" height="200" hidden></canvas></div>
+    <div id="UserActivityDiv" style="height:15em;width:30em;" hidden><canvas id="UserActivityChart" width="400" height="200" hidden></canvas></div>
     <table id="playerInfoTable" hidden>
         <tr><th>ID</th><th>Username</th><th>Balance</th><th>Wins</th><th>Ties</th><th>Losses</th><th>Joined</th></tr>
+        <tbody id="playerInfoTableBody"></tbody>
     </table>
     <h2>Create User:</h2>
     <form>
@@ -32,9 +33,12 @@
         <input id="RegisterButton" type="button" value="Register">
     </form>
     <h2>Charts: </h2>
-    <div style="height:15em;width:30em;"><canvas id="UserSignUpMonthChart" width="400" height="200"></canvas></div>
-    <div style="height:30em;width:60em;"><canvas id="UsersBalacesChart" width="400" height="200"></canvas></div>
-    <div style="height:30em;width:60em;"><canvas id="WinRateChart" width="400" height="200"></canvas></div>
-    
+    <table>
+    <tr>
+    <td><div style="height:15em;width:30em;"><canvas id="UserSignUpMonthChart" width="400" height="200"></canvas></div></td>
+    <td><div style="height:15em;width:30em;"><canvas id="UsersBalacesChart" width="400" height="200"></canvas></div></td>
+    <td><div style="height:15em;width:30em;"><canvas id="WinRateChart" width="400" height="200"></canvas></div></td>
+    </tr>
+    </table>
 </body>
 </html>
