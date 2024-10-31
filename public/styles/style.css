@@ -133,14 +133,10 @@ body{
     left:0;
 }
 
-#midNav{
-    position: absolute;
-    left:50%;
-    transform: translateX(-50%);
-}
 
 .navElement{
     font-size: 2em;
+    height: 1em;
 }
 
 
@@ -468,4 +464,11 @@ h1{
     top:0%;
     left:42%;
     text-align: center;
+}
+
+
+#startGameButton{
+    position: absolute;
+    top:10%;
+    left:10%;
 }

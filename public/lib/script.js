@@ -41,6 +41,7 @@ let otherPlayer
 let playerCount = 1
 let playerIndex = 1
 let roomCode = 0
+let clientUsername = ""
 // -------------
 // INCOMING DATA
 // -------------
@@ -51,6 +52,7 @@ let roomCode = 0
 //
 socket.on('giveCards',data =>{
     console.log(data)
+    document.getElementById('actions').hidden = false
     if(data[0] != roomCode){}
     else{
     let getCards = data[1]['_cards'][0]
@@ -116,7 +118,8 @@ socket.on('bettingOver', data => {
     betHundred.hidden = true
     timer.hidden = true
     dealer.hidden = false
-    socket.emit("getCards",username.value)
+    actions.hidden = false
+    socket.emit("getCards",clientUsername)
 })
 
 
@@ -126,12 +129,15 @@ socket.on('bettingOver', data => {
 socket.on('giveDealer',data => {
     dealerHand = document.getElementById('dealerHand')
     console.log("dealerHand: " + dealerHand)
+    if(data[0] != roomCode){}
+    else{
     if(dealed == 0){
-        dealerHand.innerHTML += '<div class="card">' + data[0]['suit'] + ':' + data[0]['value'] + '</div>'
-        dealerHand.innerHTML += '<div class="card">' + data[1]['suit'] + ':' + data[1]['value'] + '</div>'
+        dealerHand.innerHTML += '<div class="card">' + data[1][0]['suit'] + ':' + data[1][0]['value'] + '</div>'
+        dealerHand.innerHTML += '<div class="card">' + data[1][1]['suit'] + ':' + data[1][1]['value'] + '</div>'
         dealed = 1
     }
-    
+    }
+
 })
 
 
@@ -306,6 +312,17 @@ socket.on('registerACK', data => {
     }
 })
 
+document.getElementById('startGameButton').addEventListener('click', () => {
+    socket.emit('startGame',[roomCode,username.value])
+    document.getElementById('startGameButton').hidden = true
+})
+
+
+socket.on('startButton', data => {
+    document.getElementById('startGameButton').hidden = false
+})
+
+
 /*
 socket.on('loginACK', data => {
     console.log("ASD")
@@ -368,10 +385,13 @@ document.getElementById('refreshRoomsButton').addEventListener('click', () => {
 });
 
 document.getElementById('joinRoomButton').addEventListener('click', () => {
-    const roomId = document.getElementById('roomIdInput').value;
-    const username = document.getElementById('usernameInput').value;  // Get username
-    socket.emit('joinRoom', [username, roomId]);
-});
+    const roomId = document.getElementById('roomIdInput').value
+    const username = document.getElementById('usernameInput').value
+    document.getElementById('joinRoomSection').hidden = true
+    document.getElementById('availableRooms').hidden = true
+    
+    socket.emit('joinRoom', [username, roomId])
+})
 
 document.getElementById('createRoomButton').addEventListener('click', e => {
     document.getElementById('availableRooms').hidden = true
@@ -390,6 +410,9 @@ socket.on('getActiveRoomsACK', data => {
 
         const button = listItem.querySelector('input[type="button"]');
         button.addEventListener('click', function() {
+            const username = document.getElementById('usernameInput').value
+            document.getElementById('joinRoomSection').hidden = true
+            document.getElementById('availableRooms').hidden = true
             socket.emit('joinRoom', [username.value, data[i]])
         })
     }
@@ -408,9 +431,9 @@ socket.on('joinedRoom', data => {
 })
 
 socket.on('tryCreateRoomACK', data => {
-    console.log("ASD")
     if(data[0] == 1){
         document.getElementById('roomCode').innerText = data[1]
+        document.getElementById('roomCodeLabel').innerText = data[1]
     }
     else{
         roomCode = Math.floor(1 + Math.random() * 999999)
@@ -425,8 +448,8 @@ changeRoomTypeButton.addEventListener('click', e => {
 })
 
 document.getElementById('startCreatedGame').addEventListener('click', e => {
-    socket.emit('createRoom',roomCode)
-    socket.emit('joinRoom', [username.value,roomCode])
+    socket.emit('createRoom',[roomCode,clientUsername])
+    socket.emit('joinRoom', [clientUsername,roomCode])
 })
 
 socket.on('roomCreated', data => {
@@ -451,6 +474,7 @@ socket.on('canDouble', data => {
 loginButton.addEventListener('click', e => {
     //console.log(username.value + " " + password.value)
     const data = [username.value,password.value]
+    clientUsername = username.value
     socket.emit('clientLogin',data)
     
 })

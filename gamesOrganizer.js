@@ -1,18 +1,26 @@
 const gameOperator = require("./gameOperator.js");
 
 class GamesOrganizer {
+
+    _games = {}
+
     constructor() {
         this._games = {};
     }
 
-    addGame(roomId = 0) {
+    addGame(owner,roomId = 0) {
+
         if (this._games[roomId]) {
             console.error("Room ID already exists");
             return false;
         }
-        this._games[roomId] = new gameOperator(roomId);
-        console.log("New game created with room ID:", roomId);
+        this._games[roomId] = new gameOperator(roomId,owner);
+        console.log("New game created with room ID:" + roomId + " By: " + owner);
         return true;
+    }
+
+    getRoomOwner(roomId){
+        return this._games[roomId].getOwner()
     }
 
     removeGame(roomId) {
@@ -25,19 +33,18 @@ class GamesOrganizer {
     }
 
     findUsernameInGame(username) {
-        console.log(this._games)
         for (let roomId in this._games) {
-            if (this._games[roomId].getPlayer(username) !== '') {
-                return this._games[roomId];
+            if (this._games[roomId].playerExists(username)) {
+                return this._games[roomId]
             }
         }
-        return null;
+        return null
     }
 
     addPlayerToRoom(roomId, username, balance) {
         if (!this._games[roomId]) {
             console.log(`Room ${roomId} does not exist, creating new room.`);
-            this.addGame(roomId);
+            this.addGame(username,roomId);
         }
 
         const game = this._games[roomId];
@@ -59,21 +66,13 @@ class GamesOrganizer {
                 return roomId;
             }
         }
-        const newRoomId = this.createNewGame();
+        const newRoomId = this.createNewGame(username);
         this._games[newRoomId].addExistingPlayer(username, balance);
         return newRoomId;
     }
 
-    playerHit(username) {
-        const game = this.findUsernameInGame(username);
-        if (game) {
-            game.playerHit(username);
-        } else {
-            console.error(`Player ${username} not found in any game.`);
-        }
-    }
 
-    createNewGame(newRoomId = 0) {
+    createNewGame(owner,newRoomId = 0) {
         let roomId;
         if(newRoomId < 999999 && newRoomId > 0){
             roomId = newRoomId
@@ -83,7 +82,7 @@ class GamesOrganizer {
                 roomId = Math.floor(1 + Math.random() * 999999);
             } while (this._games[roomId])
         }
-        this.addGame(roomId);
+        this.addGame(owner,roomId);
         return roomId;
     }
 
@@ -115,6 +114,11 @@ class GamesOrganizer {
         } else {
             console.error(`User ${username} not found in any game.`);
         }  
+    }
+
+    startGame(roomId){
+        console.log(roomId + " started the game")
+        this._games[roomId].startGame()
     }
 
     getActiveRooms() {

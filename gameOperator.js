@@ -18,9 +18,12 @@ class GameOperator{
     _lostPlayers = []
     _gameStarted = false
     _timer = 0
+    _status = 'public'
+    _owner = 'default'
 
-    constructor(id){
+    constructor(id, owner){
         this._id = id
+        this._owner = owner
     }
     addPlayer(username){
         let newPlayer = new Player(username)
@@ -115,11 +118,22 @@ class GameOperator{
     getPlayer(username){
         for(let i = 0; i < this._players.length; i++){
             if(this._players[i].getUsername() == username){
+                console.log("found player")
                 return this._players[i]
             }
         }
         return ''
     }
+
+    playerExists(username){
+        for(let i = 0; i < this._players.length; i++){
+            if(this._players[i].getUsername() == username){
+                return true
+            }
+        }
+        return false
+    }
+
     getCurrentPlayerUsername(){
         if(this._currentPlayer == this._players.length){
             return "Dealer"
@@ -223,6 +237,10 @@ class GameOperator{
 
     getId(){
         return this._id
+    }
+
+    getOwner(){
+        return this._owner
     }
 }
 

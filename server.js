@@ -18,8 +18,7 @@ const GamesOrganizer = require('./gamesOrganizer.js')
 const gameOperator = require("./gameOperator.js")
 
 const organizer = new GamesOrganizer()
-//organizer.createNewGame()
-//const operator = new gameOperator(1)
+
 
 // CONNECTION
 const express = require('express')
@@ -35,14 +34,12 @@ app.use(express.static('public'))
 //DATABASE
 const mysql = require('mysql2')
 const databaseHandler = require("./databaseHandler.js")
+const { send } = require('process')
 const handler = new databaseHandler()
 
 
 let timerStarted = false
 let gameStarted = false
-let timer = 10
-let timers = []
-
 
 
 //SOCKET EVENTS
@@ -54,11 +51,26 @@ io.on('connection', (socket) => {
   })
 
   socket.on('createRoom', async (data) => {
-    let roomId = organizer.createNewGame(data)
-    socket.join(roomId)
-    console.log(`Room ${roomId} created.`)
-    socket.emit('roomCreated', roomId)
-  })
+    let roomId = organizer.createNewGame(data[1],data[0]);
+    socket.join(roomId);
+    console.log(`Room ${roomId} created by ${data[1]}.`);
+    socket.emit('roomCreated', roomId);
+  });
+
+  socket.on('startGame', (data) => {
+    roomId = data[0]
+    username = data[1]
+
+    if (organizer.roomExists(roomId) && organizer.getRoomOwner(roomId) == username) {
+      organizer.startGame(roomId);
+      io.emit('bettingOver',0)
+      let playerCount = organizer.findUsernameInGame(username).getPlayerCount()
+      io.to(roomId).emit('playerCount',playerCount)
+    } else {
+      socket.emit('error', 'Only the room owner can start the game or room does not exist.');
+    }
+  });
+  
   
   socket.on('tryCreateRoom', async data => {
     if(!organizer.roomExists(data)){
@@ -82,28 +94,11 @@ io.on('connection', (socket) => {
       organizer.addPlayerToRoom(roomId, username, balance);
       socket.join(roomId);
       socket.emit('joinedRoom', roomId);
-      io.to(roomId).emit('playerJoined', { username, balance });
-    } else {
-      socket.emit('error', 'Room not found');
-    }
-  })
-
-  socket.on('startGame', (data) => {
-    const { roomId } = data;
-    if (organizer.roomExists(roomId)) {
-      if (!gameTimers[roomId]) {
-        let timer = 10;
-        gameTimers[roomId] = setInterval(() => {
-          if (timer > 0) {
-            io.to(roomId).emit('timer', timer);
-            timer--;
-          } else {
-            clearInterval(gameTimers[roomId]);
-            organizer.startGameInRoom(roomId);
-            io.to(roomId).emit('gameStarted');
-          }
-        }, 1000);
+      socket.emit('balanceUPDT',balance)
+      if(organizer.getRoomOwner(roomId) == username){
+        socket.emit('startButton', 1)
       }
+      io.to(roomId).emit('playerJoined', { username, balance });
     } else {
       socket.emit('error', 'Room not found');
     }
@@ -135,39 +130,6 @@ io.on('connection', (socket) => {
     }
   })
   
-  //STARTING SCREEN
-  socket.on('loginSubmit', async data =>{
-    console.log("user logged in: " + data)
-    if(!gameStarted){
-      let balance = await handler.getUserBalance(data)
-      organizer.addPlayer(data,balance)
-      //operator.addExistingPlayer(data,balance)
-      socket.emit('balanceUPDT',balance)
-      if(!timerStarted){
-        timer = 10
-        timerStarted = true
-      let firstCountDown = setInterval(function() {
-        if(timer > 0){
-          console.log(timer)
-          io.emit('timer',timer)
-        }
-        if(--timer < 0){
-          if(!gameStarted){
-            io.emit('bettingOver',0)
-            organizer.findUsernameInGame(data).startGame()
-            //operator.startGame()
-            let playerCount = organizer.findUsernameInGame(data).getPlayerCount()
-            //let playerCount = operator.getPlayerCount()
-            io.emit('playerCount',playerCount)
-            clearInterval(firstCountDown)
-          }
-          gameStarted = true
-      }
-    }, 1000)
-    }
-    }
-  })
-
 
   socket.on('clientRegister', async data => {
     console.log('Register attempt: ' + data)
@@ -208,26 +170,27 @@ io.on('connection', (socket) => {
   //GAME SCREEN
   socket.on('getCards',data =>{
     let game = organizer.findUsernameInGame(data)
+    let roomId = game.getId()
     let cards = game.getPlayer(data)
-    io.emit('giveCards',[game.getId(),cards])
-    io.emit('giveDealer',[game.getId(),game.getDealer()._cards[0]])
+    io.to(roomId).emit('giveCards',[game.getId(),cards])
+    io.to(roomId).emit('giveDealer',[game.getId(),game.getDealer()._cards[0]])
     let currentPlayer = game.getCurrentPlayerUsername()
-    io.emit('playerTurn',[game.getId(), currentPlayer])
+    io.to(roomId).emit('playerTurn',[game.getId(), currentPlayer])
     if(game.getPlayer(currentPlayer).getBalance() >= game.getPlayer(currentPlayer).getBet()){
-      io.emit('canDouble', [game.getId(),currentPlayer])
+      io.to(roomId).emit('canDouble', [game.getId(),currentPlayer])
     }
     if(game.getPlayer(currentPlayer)['_canSplit']){
-      io.emit('canSplit', [game.getId(),currentPlayer])
+      io.to(roomId).emit('canSplit', [game.getId(),currentPlayer])
     }
   })
 
   socket.on('action', data =>{
     console.log("user action: " + data)
-    let game = organizer.findUsernameInGame(username)
     let datas = data.split(":")
     let username = datas[0]
     let action = datas[1]
     let currentPlayer = ""
+    let game = organizer.findUsernameInGame(username)
     switch(action){
       case "split":
         game.playerSplit(username)
@@ -399,6 +362,9 @@ io.on('connection', (socket) => {
   socket.on('getNewRoomCode', async data => {
   
   })
+
+
+  
 
 });
 
