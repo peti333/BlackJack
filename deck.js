@@ -16,6 +16,7 @@ class Deck{
             }
         }
     }
+    /*
     //Use some interesing shuffle algorithm??
     shuffle(){
         let randomNumber = 0
@@ -27,6 +28,19 @@ class Deck{
             [this._cards[i],this._cards[randomNumber]] = [this._cards[randomNumber], this._cards[i]]
         }
     }
+    */
+    //Fisher-Yates keverés
+    shuffle() {
+        let j = 0
+        for (let i = this._cards.length - 1; i > 0; i--) {
+          j = Math.floor(Math.random() * (i + 1))
+          let temp = this._cards[i]
+          this._cards[i] = this._cards[j]
+          this._cards[j] = temp
+        }
+      }
+
+
     drawCard(){
         return this._cards.pop()
     }

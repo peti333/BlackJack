@@ -6,12 +6,14 @@ const playerInfoTableBody = document.getElementById('playerInfoTableBody')
 const RegisterButton = document.getElementById('RegisterButton')
 const usernameInput = document.getElementById('usernameInput')
 const passwordInput = document.getElementById('passwordInput')
-const currentPlayerTable = document.getElementById('currentPlayerTable')
-
+const currentPlayerTable = document.getElementById('currentPlayersTable')
+const resetCurrentPlayersTable = document.getElementById('resetCurrentPlayersTable')
+const resetCurrentGamesTable = document.getElementById('resetCurrentGamesTable')
 
 //INFORMATION
 socket.emit('getAllUsernames','admin')
 socket.emit('getCurrentUsers','admin')
+socket.emit('getCurrentGames','admin')
 
 //CHARTS
 socket.emit('getUserSignupDates' , 'admin')
@@ -19,12 +21,19 @@ socket.emit('getUserBalanceCharts', 'admin')
 socket.emit('getWinRate','admin')
 
 
-//TODO:
-socket.on('currentPlayerTableACK', data => {
-    currentPlayerTable.innerHTML = ""
-    data.forEach(element => {
-        
-    });
+socket.on('getCurrentUsersACK', data => {
+    document.getElementById('currentPlayersTableBody').innerHTML = ''
+    for(let i = 0; i < data.length; i++){
+        document.getElementById('currentPlayersTableBody').innerHTML += '<tr><td>'+ data[i][0] +'</td><td>'+ data[i][1] +'</td><td>'+ data[i][2] +'$</td></tr>'
+    }
+
+})
+
+socket.on('getCurrentGamesACK', data => {
+    document.getElementById('currentGamesTableBody').innerHTML = ''
+    for(let i = 0; i < data.length; i++){
+        document.getElementById('currentGamesTableBody').innerHTML += '<tr><td>'+ data[i][0] +'</td><td>'+ data[i][1] + ' / 5</td></tr>'
+    }
 })
 
 socket.on('getUserSignupDatesACK', data => {
@@ -137,32 +146,32 @@ socket.on('getWinRateACK', data => {
     })
 })
 
-let UserActivityChart = null; // Store the chart instance
+let UserActivityChart = null // Store the chart instance
 
 socket.on('getUserActivityACK', data => {
-    const chartElement = document.getElementById('UserActivityChart');
+    const chartElement = document.getElementById('UserActivityChart')
 
 
     if (UserActivityChart) {
-        UserActivityChart.destroy();
-        UserActivityChart = null;
+        UserActivityChart.destroy()
+        UserActivityChart = null
     }
 
     if (!data || data.length === 0) {
-        chartElement.hidden = true;
+        chartElement.hidden = true
         document.getElementById('UserActivityDiv').hidden = true
-        return;
+        return
     }
 
     document.getElementById('UserActivityDiv').hidden = false
 
-    chartElement.innerHTML = "";
-    chartElement.hidden = false;
+    chartElement.innerHTML = ""
+    chartElement.hidden = false
     
 
-    let chart = chartElement.getContext('2d');
-    const hours = data.map(item => item.activityByHour);
-    const counts = data.map(item => item.activityCount);
+    let chart = chartElement.getContext('2d')
+    const hours = data.map(item => item.activityByHour)
+    const counts = data.map(item => item.activityCount)
 
     UserActivityChart = new Chart(chart, {
         type: 'line',
@@ -194,8 +203,8 @@ socket.on('getUserActivityACK', data => {
                 }
             }
         }
-    });
-});
+    })
+})
 
 
 
@@ -210,11 +219,7 @@ socket.on('getAllUsernamesACK', data => {
 socket.on('getUserInformationACK',data => {
     playerInfoTable.hidden = false
     playerInfoTableBody.innerHTML = ""
-    playerInfoTableBody.innerHTML += '<tr><td>' + data[0]['id'] +'</td><td>' + data[0]['username'] + '</td><td>' + data[0]['balance'] + '</td><td>' + data[0]['wins'] + '</td><td>' + data[0]['ties'] + '</td><td>' + data[0]['losses'] + '</td><td>' + data[0]['joined'] + '</td><td><input id="buttonHide" type="button" value="X"></td><td><input id="buttonDelete" type="button" value="Delete"></td></tr>'
-    document.getElementById('buttonHide').addEventListener('click', e => {
-        playerInfoTableBody.innerHTML = ""
-        playerInfoTable.hidden = false
-    })
+    playerInfoTableBody.innerHTML += '<tr><td>' + data[0]['id'] +'</td><td>' + data[0]['username'] + '</td><td>' + data[0]['balance'] + '</td><td>' + data[0]['wins'] + '</td><td>' + data[0]['ties'] + '</td><td>' + data[0]['losses'] + '</td><td>' + data[0]['joined'] + '</td><td><input id="buttonDelete" class="simpleButton" type="button" value="Delete"></td></tr>'
     document.getElementById('buttonDelete').addEventListener('click', e => {
         playerInfoTableBody.innerHTML = ""
         playerInfoTable.hidden = false
@@ -243,4 +248,13 @@ playerInfoButton.addEventListener('click', e => {
 RegisterButton.addEventListener('click', e=> {
     let data = [usernameInput.value,passwordInput.value]
     socket.emit('clientRegister', data)
+})
+
+
+resetCurrentPlayersTable.addEventListener('click', e => {
+    socket.emit('getCurrentUsers','admin')
+})
+
+resetCurrentGamesTable.addEventListener('click', e => {
+    socket.emit('getCurrentGames','admin')
 })

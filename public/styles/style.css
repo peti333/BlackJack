@@ -4,10 +4,31 @@ body{
     font-family:Arial, Helvetica, sans-serif
 }
 
-#title{
+#title {
     text-align: center;
     font-size: 8em;
     color: white;
+    animation: fade-in 2s, float-around 5s ease-in-out infinite;
+}
+
+
+/* Floating movement animation */
+@keyframes float-around {
+    0% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(-10px, 8px); /* Move left and down */
+    }
+    50% {
+        transform: translate(8px, -10px); /* Move right and up */
+    }
+    75% {
+        transform: translate(-5px, -5px); /* Move slightly left and up */
+    }
+    100% {
+        transform: translate(0, 0); /* Return to the center */
+    }
 }
 
 #login{
@@ -15,6 +36,7 @@ body{
     flex-direction: column;
     width: 200px;
     margin: 0 auto;
+    animation: fade-in 4s;
 }
 
 .loginLabel{
@@ -60,35 +82,75 @@ body{
     background-color: #7c4d77;
 }
 
-  
-#actions{
-    height: 12em;
-    width: 8em;
-    position: absolute;
-    bottom:2em;
-    right:2em;
+#ChooseButtons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 20em; /* Full screen height for centering */
     text-align: center;
 }
 
+#ChooseButtons[hidden] {
+    display: none !important; /* Completely hide the element */
+}
 
-#actions > div{
-    border: 2px solid black;
+#ChooseButtons input[type="button"] {
+    font-size: 1.5rem; /* Increase font size */
+    padding: 20px 40px; /* Add padding for larger buttons */
+    margin: 10px; /* Space between buttons */
+    width: 250px; /* Fixed width for uniformity */
+    border-radius: 10px; /* Rounded corners for styling */
+}
+
+
+#actions {
+    height: 12em;
+    width: 8em;
+    position: absolute;
+    bottom: 2em;
+    right: 2em;
+    text-align: center;
+}
+
+/* Container for individual buttons */
+#actions > div {
+    border: 2px solid #95739c; /* Soft color for the border */
     border-radius: 20px;
-    background-color: rgb(228, 177, 240);
+    background-color: rgb(228, 177, 240); /* Light lavender background */
     position: absolute;
     height: 3em;
     width: 8em;
-    right:0em;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
 }
 
-
-#actions > div:hover{
-    background-color: #95739c;
+/* Hover effect for buttons */
+#actions > div:hover {
+    background-color: #95739c; /* Darker shade on hover */
+    transform: translateY(-5px); /* Button moves slightly up */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
 }
 
-#actions > div > p{
-    color:black;
+/* Text styling inside buttons */
+#actions > div > p {
+    color: black;
+    font-size: 1.1rem;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Text shadow for depth */
 }
+
+/* Active state for clicked button */
+#actions > div:active {
+    background-color: #6f4e82; /* Even darker shade when pressed */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4); /* Reduce shadow intensity */
+    transform: translateY(0px); /* Reset position on click */
+}
+
 
 #hit{
     top:0em;
@@ -99,24 +161,65 @@ body{
 }
 
 #split{
-    top:6em;
-}
-
-#doubleDown{
     top:9em;
 }
 
+#doubleDown{
+    top:6em;
+}
+/*
 #table{
     position: absolute;
-    top:5em;
+    top:3em;
     left: 0; 
     right: 0; 
     margin-left: auto; 
     margin-right: auto; 
-    height: 80%;
-    width: 80%;
+    height: 90%;
+    width: 90%;
     background-color: #8156ac;
     border-radius: 25%;
+}
+*/
+#table {
+    position: absolute;
+    top: 3em;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    height: 90%;
+    width: 90%;
+    background: radial-gradient(circle at top, #A26DCB 0%, #8156ac 60%, #5D3A85 100%);
+    border-radius: 25%;
+    border: 5px solid #2D1B45;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(99, 218, 222, 0.4);
+    overflow: hidden;
+}
+
+/* Optional: Add a felt texture overlay */
+#table:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://www.transparenttextures.com/patterns/fancy-deboss.png'); /* Felt texture */
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.dealer-rule {
+    position: absolute;
+    top:25%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Arial', sans-serif;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 15px;
+    text-align: center;
 }
 
 #navbar{
@@ -127,10 +230,24 @@ body{
     top:-0.5em;
     height: 3em;
     width: 100%;
-    background-color: #8160a2;
+    background: linear-gradient(to right, #63DADE, #A26DCB, #63DADE);
+    background-size: 200% 100%;
+    animation: gradient-loop 6s ease-in-out infinite;
     list-style-type: none;
     padding: 0;
     left:0;
+}
+
+@keyframes gradient-loop {
+    0% {
+        background-position: 0% 0;
+    }
+    50% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: 0% 0;
+    }
 }
 
 
@@ -140,32 +257,59 @@ body{
 }
 
 
-#bets{
+#bets {
     height: 12em;
     width: 8em;
     position: absolute;
-    bottom:2em;
-    right:2em;
+    bottom: 2em;
+    right: 2em;
     text-align: center;
 }
 
-#bets > div{
-    border: 2px solid black;
+/* Styling for individual bet buttons */
+#bets > div {
+    border: 2px solid #95739c; /* Darker border color */
     border-radius: 20px;
-    background-color: #E4B1F0;
+    background-color: #E4B1F0; /* Light lavender background */
     position: absolute;
     height: 3em;
     width: 8em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    transition: all 0.3s ease; /* Smooth transition */
 }
 
-#bets > div:hover{
-    background-color: #95739c;
+/* Hover effect for buttons */
+#bets > div:hover {
+    background-color: #95739c; /* Darker background on hover */
+    transform: translateY(-5px); /* Button moves slightly up */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
 }
 
-#bets > div > p{
-    /*margin:2em;*/
-    color:black;
+/* Active state for clicked button */
+#bets > div:active {
+    background-color: #6F4E82; /* Even darker background on click */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4); /* Reduces shadow intensity */
+    transform: translateY(0px); /* Button returns to original position */
 }
+
+/* Text styling inside bet buttons */
+#bets > div > p {
+    color: #2d1b45; /* Dark text for contrast */
+    font-size: 1.2rem;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
+}
+
+/* Optional: Add a button focus effect (useful for accessibility) */
+#bets > div:focus {
+    outline: none; /* Remove default outline */
+    border: 3px solid #63DADE; /* Add a blue outline for focus */
+    box-shadow: 0 0 10px rgba(99, 218, 222, 0.7); /* Glowing effect */
+}
+
 
 #betFive{
     top:0em;
@@ -183,50 +327,180 @@ body{
     top:9em;
 }
 
-#bet{
-    margin:2em;
-    color:black;
+#bet {
+    margin: 2em;
+    color: black;
     position: absolute;
     right: 10em;
     bottom: 2em;
     height: 75px;
     width: 75px;
     background-color: #E4B1F0;
-    border: 3px solid black;
+    border: 3px solid #95739c;
     border-radius: 50%;
-    display: inline-block;
-    text-align: center;
+    display: inline-flex; /* Change to flexbox to better center content */
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
-#bet:hover{
+/* Hover, active and focus effects stay the same */
+#bet:hover {
     background-color: #95739c;
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
-#bet > p{
-    font-size: 1em;
-    margin:1em;
+#bet:active {
+    background-color: #6F4E82;
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 }
 
-#timer{
-    font-size: 4em;
-    color:black;
+#bet p {
+    color: black;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#deck{
     position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
-    z-index: 2;
-    text-align: center;
+    left: 30%;
+    top:8%;
+}
+
+
+@keyframes flyToHand {
+    from {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(var(--moveX)) translateY(var(--moveY));
+        opacity: 1;
+    }
+}
+
+.card.fly {
+    animation: flyToHand 0.8s forwards;
+}
+
+.card.delay {
+    animation-delay: 0.4s;
 }
 
 .card{
     background-color: purple;
-    height: 8em;
-    width: 6em;
-    border:1px solid black;
+    height: 6em;
+    width: 4em;
     margin-right: -1em;
+    transition: transform 0.5s ease-in-out;
+
+    border: 2px solid #000;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    background-color: white;
+    color: black;
+
 }
+
+.activeCard{
+    border: 3px solid #63DADE;
+}
+
+
+#hiddenCard {
+    width: 4em;
+    height: 6em;
+}
+
+/* Initially, the value and suit will be visible */
+.number, .suit {
+    transition: opacity 0.5s ease; /* Smooth opacity transition */
+}
+
+/* When the card values and suits change, we fade them out first */
+.fade-out {
+    opacity: 0;  /* Make the current value/suit invisible */
+}
+
+/* When the new values/suits are revealed, we fade them in */
+.fade-in {
+    opacity: 1;  /* Make the new value/suit visible */
+}
+
+#createRoomSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #A26DCB, #63DADE);
+    width: 300px;
+    margin: 20px auto;
+    font-family: 'Arial', sans-serif;
+}
+
+#createRoomSection[hidden] {
+    display: none !important;
+}
+
+.backButton {
+    align-self: flex-start;
+    padding: 1em 1em;
+    background: #e0e0e0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.backButton:hover {
+    background: #d4d4d4;
+    transform: scale(1.05);
+}
+
+#roomsList > li{
+padding: 6px;
+}
+
+.sectionLabel {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.roomCodeContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.roomCode {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+#roomCodeLabel {
+    user-select: text;
+}
+
 
 #playerHand{
     position: absolute;
@@ -267,14 +541,29 @@ body{
 #profile{
     position: absolute;
     display:flex;
-    left: 10%;
+    left: 30%;
     bottom:4em;
-    width: 12em;
+    width: 8em;
     height: 4em;
     background-color: #FFE1FF;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
+    color: black;
+}
+
+#playerSum{
+    position: absolute;
+    display:flex;
+    left: 10%;
+    bottom:4em;
+    width: 2em;
+    height: 2em;
+    background-color: #FFE1FF;
+    border-radius: 25%;
+    justify-content: center;
+    align-items: center;
+    color: black;
 }
 
 .activeProfile{
@@ -291,7 +580,7 @@ body{
     display:flex;
     left: 10%;
     top:10%;
-    width: 12em;
+    width: 8em;
     height: 4em;
     background-color: #F8FF95;
     border-radius: 25%;
@@ -308,7 +597,7 @@ body{
     display:flex;
     right: 10%;
     top:10%;
-    width: 12em;
+    width: 8em;
     height: 4em;
     background-color: #FFE1FF;
     border-radius: 25%;
@@ -323,25 +612,27 @@ body{
 
 .profileBorder{
     display:flex;
-    width: 12em;
+    width: 8em;
     height: 4em;
     background-color: #FFE1FF;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
+    color:black
 }
 
 #dealerName{
     position: absolute;
     display:flex;
-    left: 42%;
+    left: 45%;
     top:0em;
-    width: 12em;
+    width: 8em;
     height: 4em;
     background-color: #FFE1FF;
     border-radius: 25%;
     justify-content: center;
     align-items: center;
+    color:black;
 }
 
 #dealerName > p{
@@ -349,56 +640,76 @@ body{
     margin:0em;
 }
 
-#popUp{
+#popUp {
+    visibility:hidden;
     z-index: 10;
-    color:white;
-    font-size: 6em;
+    color: white;
+    font-size: 4em;
     text-align: center;
     position: absolute;
-    background-color: grey;
-    opacity: 75%;
-    top:20%;
-    width: 100%;
+    background: linear-gradient(135deg, #A26DCB, #63DADE);
+    top: 20%;
+    left:22%;
+    width: 50%;
     height: 25%;
+    border-radius: 15px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popUpGrow{
+    animation: popupGrow 1.5s ease; 
+}
+
+@keyframes popupGrow {
+    from {
+        transform: scale(0.2); /* Start small */
+    }
+    to {
+        transform: scale(1); /* Grow to full size */
+    }
 }
 
 .hand{
     display: flex;
     justify-content: flex-start;
     position: relative;
-    height: 8em;
-    width: 48em;
+    height: 6em;
+    width: 20em;
 }
 
 .player1{
     position: absolute;
     top: 10%;
     left:5%;
-    width: 12em;
+    width: 8em;
     height: 10em;
 }
 
 .player2{
     position: absolute;
-    top: 40%;
+    top: 50%;
     left:5%;
-    width: 12em;
+    width: 8em;
     height: 10em;
 }
 
 .player3{
     position: absolute;
-    top: 10%;
+    top: 20%;
     right:5%;
-    width: 12em;
+    width: 8em;
     height: 10em;
 }
 
 .player4{
     position: absolute;
-    top: 40%;
+    top: 50%;
     right:5%;
-    width: 12em;
+    width: 8em;
     height: 10em;
 }
 
@@ -432,10 +743,20 @@ body{
   .sidenav .closebtn {
     position: absolute;
     top: 0;
-    right: 25px;
+    right: 0;
     font-size: 36px;
-    margin-left: 50px;
-  }
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding: 8px;
+}
   
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
@@ -444,20 +765,6 @@ body{
 
 
 
-#leaderBoardTable{
-    position: absolute;
-    top: 80%;
-    left: 45%;
-    transform: translate(-50%, -50%);
-    border-collapse: collapse;
-    text-align: center;
-    width: 40%;
-}
-
-#leaderBoardTable > th, td {
-    border: 2px solid #be78b7;
-    padding: 8px;
-}
 
 h1{
     position: absolute;
@@ -467,8 +774,297 @@ h1{
 }
 
 
-#startGameButton{
-    position: absolute;
-    top:10%;
-    left:10%;
+.sidenav {
+    background: linear-gradient(135deg, #1b1422, #3a2a47);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    color: #818181;
 }
+
+.sidenav a:hover {
+    color: #fff;
+    background-color: #be78b7;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* Menu Icon */
+.menu-icon {
+    font-size: 30px;
+    color: #63DADE;
+    cursor: pointer;
+    padding: 10px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+#startGameButton{
+    z-index: 3;
+    position: absolute;
+    bottom: 20%;
+    width: 16em;
+    height: 6em;
+    left:43%;
+    border-radius: 25%;
+    font-weight: bold;
+}
+
+#startGameButton:hover{
+    background-color: rgb(124, 77, 119);
+}
+
+#clearHandsButton{
+    z-index: 3;
+    position: absolute;
+    bottom: 20%;
+    width: 16em;
+    height: 6em;
+    left:43%;
+    border-radius: 25%;
+    font-weight: bold;
+}
+
+.simpleButton2{
+    background: #A26DCB;
+    border: 2px solid transparent;
+    padding: 0.75rem 1.25rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.5s ease, border-color 0.3s ease;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.simpleButton2:hover {
+    background-color: rgb(165, 55, 154);
+    border-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.simpleButton2:active {
+    transform: scale(0.95); /* Added scale effect when button is clicked */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); /* Reduced shadow effect for active state */
+}
+
+
+.simpleButton{
+    /*
+    padding: 10px;
+    background-color: #be78b7;
+    border-radius: 2px;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    */
+    background: linear-gradient(135deg, #63DADE, #A26DCB);
+    border: 2px solid transparent;
+    padding: 0.75rem 1.25rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.5s ease, border-color 0.3s ease;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.simpleButton:hover {
+    background: linear-gradient(135deg, #A26DCB, #63DADE);
+    border-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.simpleButton:active {
+    transform: scale(0.95); /* Added scale effect when button is clicked */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); /* Reduced shadow effect for active state */
+}
+
+
+#availableRooms{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #A26DCB, #63DADE);
+    width: 300px;
+    margin: 20px auto;
+    font-family: 'Arial', sans-serif;
+}
+
+#availableRooms[hidden] {
+    display: none !important;
+}
+#joinRoomSection{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #A26DCB, #63DADE);
+    width: 300px;
+    margin: 20px auto;
+    font-family: 'Arial', sans-serif;
+}
+
+#joinRoomSection[hidden] {
+    display: none !important;
+}
+
+@keyframes fade-in {
+    0% {opacity: 0%;}
+    100% {opacity: 100%;}
+}
+
+#loginMessage{
+    text-align: center;
+    animation: fade-in 1s;
+}
+
+#joinRoomMessage{
+    text-align: center;
+    animation: fade-in 1s;
+}
+
+#roomIdInput{
+    height: 2em;
+    width: 12em;
+}
+
+
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Column styling */
+.column {
+    width: 80px;
+    height: 200%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.move-up, .move-down {
+    position: relative; 
+    overflow: hidden;
+}
+
+.move-up {
+    animation: moveUp 60s ease-in-out infinite;
+}
+
+.move-down {
+    animation: moveDown 60s ease-in-out infinite;
+}
+
+/* Keyframes for upward movement */
+@keyframes moveUp {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-50%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Keyframes for downward movement */
+@keyframes moveDown {
+    0% {
+        transform: translateY(-50%);
+    }
+    50% {
+        transform: translateY(0); /* This is the halfway point */
+    }
+    100% {
+        transform: translateY(-50%);
+    }
+}
+
+
+/* Shape styles with opacity for subtle effect */
+.shape {
+    font-size: 6vw; /* Size of the card suit symbols */
+    margin: 0 0;
+    opacity: 0.5;
+}
+
+/* Spades (♠) */
+.shape.spade {
+    color: #A26DCB;
+}
+
+/* Hearts (♥) */
+.shape.heart {
+    color: #63DADE;
+}
+
+/* Clubs (♣) */
+.shape.club {
+    color: #A26DCB;
+}
+
+/* Diamonds (♦) */
+.shape.diamond {
+    color: #63DADE;
+}
+  
+  .top, .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Align items vertically centered */
+  }
+  
+  .number {
+    font-size: 28px; /* Keep the number size the same */
+    font-weight: bold;
+  }
+  
+  .suit {
+    color: #63DADE;
+    font-size: 2.5em; 
+    line-height: 1; 
+  }
+
+  .card-back {
+    height: 6em;
+    width: 4em;
+    background-color: #A26DCB; 
+    border: 2px solid black;
+    padding: 10px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card-back-pattern {
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(45deg, #63DADE, #63DADE 10px, transparent 10px, transparent 20px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;  /* Ensure lines don't block interaction */
+  }
+  
+  /*MAIN PAGE*/
+
+  /* CARDS */
+

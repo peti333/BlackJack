@@ -4,41 +4,806 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/adminStyle.css">
     <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer type="module" src="../lib/adminScript.js"></script>
+    <link rel="icon" type="image/x-icon" href="./../assets/vecteezy_cartoon-game-alphabet-letter-and-number_44623174.png">
     <title>ADMIN</title>
 </head>
 <body>
-    <h1>Admin Dashboard</h1>
-    <h2>Current Users:</h2>
-    <table id="currentPlayerTable">
-        <tr><th>ID</th><th>Username</th><th>Balance</th><th>Wins</th><th>Ties</th><th>Losses</th><th>Winrate</th></tr>
-    </table>
-    <h2>Current Games:</h2>
-    
-    <label for="optionsLabel"><h2>Browse Players:</h2></label>
-    <select id="optionsSelect" name="options">
-    </select>
-    <input id="playerInfoButton" type="button" value="Get player information"> 
-    <div id="UserActivityDiv" style="height:15em;width:30em;" hidden><canvas id="UserActivityChart" width="400" height="200" hidden></canvas></div>
-    <table id="playerInfoTable" hidden>
-        <tr><th>ID</th><th>Username</th><th>Balance</th><th>Wins</th><th>Ties</th><th>Losses</th><th>Joined</th></tr>
-        <tbody id="playerInfoTableBody"></tbody>
-    </table>
-    <h2>Create User:</h2>
-    <form>
-        <label>Username: </label><input id="usernameInput" type="text">
-        <label>Password: </label><input id="passwordInput" type="text">
-        <input id="RegisterButton" type="button" value="Register">
-    </form>
-    <h2>Charts: </h2>
-    <table>
-    <tr>
-    <td><div style="height:15em;width:30em;"><canvas id="UserSignUpMonthChart" width="400" height="200"></canvas></div></td>
-    <td><div style="height:15em;width:30em;"><canvas id="UsersBalacesChart" width="400" height="200"></canvas></div></td>
-    <td><div style="height:15em;width:30em;"><canvas id="WinRateChart" width="400" height="200"></canvas></div></td>
-    </tr>
-    </table>
+
+    <div class="background">
+        <div class="column move-up">
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+        </div>  
+        
+        <div class="column move-up">
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+        </div>
+        
+        <div class="column move-down">
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape spade">♠</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape club">♣</div>
+        </div>
+        
+        <div class="column move-up">
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape club">♣</div>
+            <div class="shape heart">♥</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+            <div class="shape diamond">♦</div>
+            <div class="shape spade">♠</div>
+            <div class="shape heart">♥</div>
+            <div class="shape club">♣</div>
+        </div>
+        
+    </div>
+
+    <div class="container">
+        <h1 class="title">Admin Dashboard</h1>
+        
+        <div class="section">
+            <h2 class="subtitle">Current Users: 
+                <input id="resetCurrentPlayersTable" type="button" class="simpleButton" value="↺">
+            </h2>
+            <table id="currentPlayersTable">
+                <thead>
+                    <tr><th>Room ID</th><th>Username</th><th>Balance</th></tr>
+                </thead>
+                <tbody id="currentPlayersTableBody"></tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2 class="subtitle">Current Games: 
+                <input id="resetCurrentGamesTable" type="button" class="simpleButton" value="↺">
+            </h2>
+            <table id="currentGamesTable">
+                <thead>
+                    <tr><th>Room ID</th><th>Players</th></tr>
+                </thead>
+                <tbody id="currentGamesTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <label for="optionsLabel"><h2 class="subtitle">Browse Players:</h2></label>
+            <select id="optionsSelect" name="options" class="selectBox"></select>
+            <input id="playerInfoButton" type="button" value="Get player information" class="simpleButton"> 
+        </div>
+
+        <div id="UserActivityDiv" class="chart-container" hidden>
+            <canvas id="UserActivityChart" width="400" height="200"></canvas>
+        </div>
+        
+        <div class="section">
+            <table id="playerInfoTable" hidden>
+                <thead>
+                    <tr><th>ID</th><th>Username</th><th>Balance</th><th>Wins</th><th>Ties</th><th>Losses</th><th>Joined</th><th>Delete user</th></tr>
+                </thead>
+                <tbody id="playerInfoTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="subtitle">Create User:</h2>
+            <form>
+                <label for="usernameInput">Username: </label><input id="usernameInput" type="text" class="inputField">
+                <label for="passwordInput">Password: </label><input id="passwordInput" type="text" class="inputField">
+                <input id="RegisterButton" type="button" value="Register" class="simpleButton">
+            </form>
+        </div>
+
+        <div class="section">
+            <h2 class="subtitle">Charts:</h2>
+            <div class="charts">
+                <div class="chart">
+                    <canvas id="UserSignUpMonthChart" width="400" height="400"></canvas>
+                </div>
+                <div class="chart">
+                    <canvas id="UsersBalacesChart" width="400" height="400"></canvas>
+                </div>
+                <div class="chart">
+                    <canvas id="WinRateChart" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

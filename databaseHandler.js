@@ -248,6 +248,7 @@ class DatabaseHandler{
       })
     }
 
+
     getLeaderBoard(){
       return new Promise((resolve,reject) => {
         return this.database.query('SELECT username, balance FROM UserInformation ORDER BY balance DESC;', (err, results) => {
@@ -276,7 +277,6 @@ class DatabaseHandler{
             } 
             else{
               if(results.length != 0){
-                console.log(results)
                 resolve(results)
               }
               else{
@@ -292,9 +292,6 @@ class DatabaseHandler{
         if (err) {
           console.error(err)
         } 
-        else {
-          console.log(results)
-        }
       })
     }
 
@@ -307,7 +304,6 @@ class DatabaseHandler{
             } 
             else{
               if(results.length != 0){
-                console.log(results)
                 resolve(results)
               }
               else{

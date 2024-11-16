@@ -1,0 +1,120 @@
+/* Base styles */
+body {
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+
+.container {
+    padding: 2rem;
+}
+
+.title {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+th, td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+th {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+.simpleButton {
+    background: linear-gradient(135deg, #63DADE, #A26DCB);
+    border: 2px solid transparent;
+    padding: 0.75rem 1.25rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.5s ease, border-color 0.3s ease;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.simpleButton:hover {
+    background: linear-gradient(135deg, #A26DCB, #63DADE);
+    border-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.simpleButton:active {
+    transform: scale(0.95); /* Added scale effect when button is clicked */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); /* Reduced shadow effect for active state */
+}
+
+/* Input Fields */
+.inputField {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.selectBox {
+    padding: 0.75rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+/* Chart containers */
+.chart-container {
+    margin: 2rem 0;
+}
+
+.charts {
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+}
+
+.chart {
+    background-color: #1b1422;
+    border-radius: 5px;
+    width: 30%;
+    height: auto;
+}
+
+/* Section layout */
+.section {
+    margin-bottom: 2rem;
+}
+
+
+/* User Activity Chart (Player Info Chart) */
+#UserActivityChart {
+    width: 1200;  /* Increased width */
+    height: 600; /* Increased height */
+}
+
+/* Resize the div container to fit the larger chart */
+#UserActivityDiv {
+    background-color: #1b1422;
+    height: 40em; /* Adjust div height */
+    width: 70em;  /* Adjust div width */
+}
